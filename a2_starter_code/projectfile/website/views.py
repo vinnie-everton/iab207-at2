@@ -4,7 +4,8 @@ main_bp = Blueprint('main', __name__)
 
 @main_bp.route('/')
 def index():
-    return '<h1>Starter code for assignment 3<h1>'
+    #return '<h1>Starter code for assignment 3<h1>'
+    return render_template('index.html')
 
 @main_bp.route('/history')
 def history():
@@ -40,3 +41,13 @@ def history():
         }
     ]
     return render_template('history.html', bookings=bookings)
+
+@main_bp.route('/user')
+def user():
+    return render_template("user.html")
+@main_bp.route('/event')
+def event():
+    return render_template("event.html")
+@main_bp.route('/create')
+def create():
+    return render_template("create.html")
