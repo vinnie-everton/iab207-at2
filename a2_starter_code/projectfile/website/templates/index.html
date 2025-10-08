@@ -1,7 +1,21 @@
 {% extends "base.html" %}
   
   {% block content %}
-  
+
+ <!-- Categories (static) -->
+  <section id="categories" class="py-3 border-bottom bg-light">
+    <div class="container">
+      <div class="d-flex flex-wrap align-items-center gap-2">
+        <span class="small text-uppercase fw-semibold">Categories:</span>
+        <button class="btn btn-outline-primary btn-sm">All</button>
+        <button class="btn btn-outline-primary btn-sm">Football</button>
+        <button class="btn btn-outline-primary btn-sm">Rugby</button>
+        <button class="btn btn-outline-primary btn-sm">Cricket</button>
+        <button class="btn btn-outline-primary btn-sm">Concert</button>
+      </div>
+    </div>
+  </section>
+
   <!-- Events -->
   <main class="py-4">
     <div class="container">
@@ -74,3 +88,4 @@
   {% endblock %}
 
   
+
