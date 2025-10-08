@@ -2,10 +2,6 @@
 
 {% block title %}My Bookings{% endblock %}
 
-{% block header %}
-
-{% endblock %}
-
 {% block hero %}
 
 {% endblock %}
@@ -15,7 +11,6 @@
 <div class="container py-4">
   <div class="d-flex align-items-center justify-content-between mb-3">
     <h1 class="h3 m-0">My Booking History</h1>
-    <a class="btn btn-primary" href="{{ url_for('main.index') }}">Home</a>
   </div>
 
   {% if bookings and bookings|length %}
