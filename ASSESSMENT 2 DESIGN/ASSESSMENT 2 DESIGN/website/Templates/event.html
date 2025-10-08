@@ -1,0 +1,85 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+  <main class="py-4">
+    <div class="container">
+      <div class="row g-4">
+        <div class="col-lg-7">
+          <img src="./static/img/event1.jpg" class="w-100 rounded-3 mb-3" alt="Titans vs Hurricanes">
+          <h1 class="h3">Titans vs Hurricanes</h1>
+          <p class="text-muted">Category: Football</p>
+          <p>Experience a fierce playoff clash under lights. Fan zones and pre-game activities open from 5:00 PM.</p>
+
+          <ul class="list-unstyled small text-muted mb-4">
+            <li><strong>Date:</strong> Sat 20 Sep 2025</li>
+            <li><strong>Start:</strong> 7:00 PM</li>
+            <li><strong>End:</strong> 9:00 PM</li>
+            <li><strong>Venue:</strong> Aurora Park Stadium</li>
+            <li><strong>Status:</strong> <span class="badge bg-success">Open</span></li>
+            <li><strong>Tickets remaining:</strong> 24</li>
+          </ul>
+
+          <section>
+            <h2 class="h5">Comments</h2>
+            <div class="vstack gap-3 mb-3">
+              <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between">
+                    <strong>Sam W</strong><span class="text-muted small">Posted: 12 Aug</span>
+                  </div>
+                  <p class="mb-0">North stand has the best atmosphere!</p>
+                </div>
+              </div>
+              <div class="card border-0 shadow-sm">
+                <div class="card-body">
+                  <div class="d-flex justify-content-between">
+                    <strong>Jess</strong><span class="text-muted small">Posted: 15 Aug</span>
+                  </div>
+                  <p class="mb-0">Is there a family bay?</p>
+                </div>
+              </div>
+            </div>
+
+            <form class="row g-2">
+              <div class="col-md-4">
+                <label class="form-label" for="cName">Your name</label>
+                <input id="cName" class="form-control" placeholder="Name">
+              </div>
+              <div class="col-md-8">
+                <label class="form-label" for="cText">Comment</label>
+                <input id="cText" class="form-control" placeholder="Write a comment">
+              </div>
+              <div class="col-12">
+                <button class="btn btn-primary mt-1" type="button">Post comment</button>
+              </div>
+            </form>
+          </section>
+        </div>
+
+        <div class="col-lg-5">
+          <div class="card">
+            <div class="card-body">
+              <h2 class="h5 mb-3">Book tickets</h2>
+              <form method="POST">
+                {{booking_form.hidden_tag() }}
+                <div class="mb-3">
+                  {{booking_form.ticketQty.label(class="form-label")}}
+                  {{booking_form.ticketQty(class="form-control")}}
+                </div>
+
+                <div class="mb-3">
+                  {{booking_form.ticketType.label(class="form-label")}}
+                  {{booking_form.ticketType(class="form-select")}}
+                </div>
+                {{booking_form.submit(class="btn btn-primary w-100")}}
+              </form>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </main>
+
+{% endblock %}
