@@ -18,6 +18,7 @@ def login():
         user_name = login_form.user_name.data
         password = login_form.password.data
         user = db.session.scalar(db.select(User).where(User.name==user_name))
+        
         if user is None:
             error = 'Incorrect user name'
         elif not check_password_hash(user.password_hash, password): # takes the hash and cleartext password
@@ -26,8 +27,8 @@ def login():
             login_user(user)
             nextp = request.args.get('next') # this gives the url from where the login page was accessed
             print(nextp)
-            if next is None or not nextp.startswith('/'):
-                return redirect(url_for('index'))
+            if nextp is None or not nextp.startswith('/'):
+                return redirect(url_for('main.index'))
             return redirect(nextp)
         else:
             flash(error)
@@ -44,11 +45,37 @@ def register():
         user_name = register_form.user_name.data
         password = register_form.password.data
         email = register_form.email.data
-        hashed_pwd = generate_password_hash(register_form.password.data)
-        if user_name is None:
-            error = "Insert a username"
-        if password is None:
-            error = "Insert a password"
-        if email is None: 
-            error = "Insert a email"
+        existing_user = db.session.scalar(db.select(User).where(User.name==user_name))
+        existing_email = db.session.scalar(db.select(User).where(User.emailid==email))
+
+        if existing_user:
+            flash('Username already exists. Please choose another one.')
+            return render_template('user.html', form=register_form, heading='Register')
+        if existing_email:
+            flash('Email already registered. Please use another email.')
+            return render_template('user.html', form=register_form, heading='Register')
+
+
+
+
+        hashed_pwd = generate_password_hash(password)
+        new_user = User(name=user_name, emailid=email, password_hash = hashed_pwd)
+        db.session.add(new_user)
+        db.session.commit()
+
+        login_user(new_user)
+
+        flash('Registration successful! Welcome!')
+        return redirect(url_for('main.index'))
+
+
+
+    
     return render_template('user.html', form=register_form, heading='Register')
+
+# Logout route
+
+@auth_bp.route('/logout')
+def logout():
+    logout_user()
+    return redirect(url_for('main.index'))
