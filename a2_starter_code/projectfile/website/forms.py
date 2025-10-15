@@ -18,4 +18,23 @@ class RegisterForm(FlaskForm):
     confirm = PasswordField("Confirm Password")
 
     # submit button
+
     submit = SubmitField("Register")
+
+ # Booking form
+class BookingForm(FlaskForm):
+    ticketQty = IntegerField("Number of Tickets", validators=[InputRequired()])
+    ticketType = SelectField("Ticket Type", choices=[("Standard", "Standard"), ("Premium", "Premium"), ("Family", "Family")], validators=[InputRequired()])
+    submit = SubmitField("Book Now")
+
+ # Create Event form
+class EventForm(FlaskForm):
+    eName = StringField("Event Name", validators=[InputRequired(), Length(min=5, max=100)])
+    eDesc = TextAreaField("Event Description", validators=[InputRequired(), Length(min=10)])
+    eCategory = SelectField("Category", choices=[("Football", "Football"), ("Rugby", "Rugby"), ("Cricket", "Cricket"), ("Concert", "Concert")], validators=[InputRequired()])
+    eVenue = StringField("Venue", validators=[InputRequired(), Length(min=5, max=100)])
+    eDate = DateField("Event Date", format='%Y-%m-%d', validators=[InputRequired()])
+    eTickets = IntegerField("Tickets Available", validators=[InputRequired()])
+    eImageUrl = StringField("Image Url", validators=[InputRequired(), Length(max=200)])
+    eImageFile = FileField("Upload Image (optional)", validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
+    submit = SubmitField("Save Event")
