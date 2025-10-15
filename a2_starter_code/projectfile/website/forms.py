@@ -1,6 +1,7 @@
 from flask_wtf import FlaskForm
-from wtforms.fields import TextAreaField, SubmitField, StringField, PasswordField
+from wtforms.fields import TextAreaField, SubmitField, StringField, PasswordField, IntegerField, SelectField, DateField, TimeField, FileField
 from wtforms.validators import InputRequired, Length, Email, EqualTo
+from flask_wtf.file import FileField, FileAllowed, FileRequired
 
 # creates the login information
 class LoginForm(FlaskForm):
@@ -38,3 +39,4 @@ class EventForm(FlaskForm):
     eImageUrl = StringField("Image Url", validators=[InputRequired(), Length(max=200)])
     eImageFile = FileField("Upload Image (optional)", validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
     submit = SubmitField("Save Event")
+
