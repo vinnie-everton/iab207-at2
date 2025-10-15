@@ -1,4 +1,4 @@
-from flask import Blueprint, render_template, url_for, flash
+from flask import Blueprint, render_template, url_for, flash, redirect, request
 from flask_login import login_required, current_user
 from .forms import BookingForm
 from .models import Order
@@ -14,40 +14,50 @@ def index():
     #return '<h1>Starter code for assignment 3<h1>'
     return render_template('index.html')
 
-@main_bp.route('/history')
-def history():
+# @main_bp.route('/history')
+# def history():
     
-      # Temporary sample data while DB is paused
-    bookings = [
-        {
-            "id": 1,
-            "title": "Acoustic Night",
-            "venue": "QUT Gardens Theatre",
-            "date": "2025-10-20",
-            "tickets": 2,
-            "status": "Confirmed",
-            "image": "event1.jpg"
-        },
-        {
-            "id": 2,
-            "title": "Tech Expo 2025",
-            "venue": "Brisbane Convention Centre",
-            "date": "2025-11-03",
-            "tickets": 1,
-            "status": "Pending",
-            "image": "event2.jpg"
-        },
-        {
-            "id": 3,
-            "title": "Food Fest",
-            "venue": "South Bank Parklands",
-            "date": "2025-08-14",
-            "tickets": 4,
-            "status": "Cancelled",
-            "image": "event3.jpg"
-        }
-    ]
-    return render_template('history.html', bookings=bookings)
+#       # Temporary sample data while DB is paused
+#     bookings = [
+#         {
+#             "id": 1,
+#             "title": "Acoustic Night",
+#             "venue": "QUT Gardens Theatre",
+#             "date": "2025-10-20",
+#             "tickets": 2,
+#             "status": "Confirmed",
+#             "image": "event1.jpg"
+#         },
+#         {
+#             "id": 2,
+#             "title": "Tech Expo 2025",
+#             "venue": "Brisbane Convention Centre",
+#             "date": "2025-11-03",
+#             "tickets": 1,
+#             "status": "Pending",
+#             "image": "event2.jpg"
+#         },
+#         {
+#             "id": 3,
+#             "title": "Food Fest",
+#             "venue": "South Bank Parklands",
+#             "date": "2025-08-14",
+#             "tickets": 4,
+#             "status": "Cancelled",
+#             "image": "event3.jpg"
+#         }
+#     ]
+#     return render_template('history.html', bookings=bookings)
+    
+@main_bp.route('/search')
+def search():
+    if request.args['search'] and request.args['search'] != "":
+        print(request.args['search'])
+        query = "%" + request.args['search'] + "%"
+        destinations = db.session.scalars(db.select(Event).where(Event.description.like(query)))
+        return render_template('index.html', destinations=destinations)
+    else:
+        return redirect(url_for('main.index'))
 
 @main_bp.route('/user')
 def user():
@@ -106,7 +116,8 @@ def create():
         return redirect(url_for('main.event'))
     return render_template('create.html', event_form=form)
 
-@main_bp.route('/event/<int:event_id/edit>', methods=['GET', 'POST'])
+# originally /event/<int:event_id/edit>
+@main_bp.route('/event/<int:event_id>', methods=['GET', 'POST'])
 @login_required
 def edit_event(event_id):
     event = Event.query.get_or_404(event_id)
@@ -151,4 +162,5 @@ def cancel_event(event_id):
     db.session.commit()
     flash('Event cancelled successfully!', 'success')
     return redirect(url_for('main.index'))
+
 
