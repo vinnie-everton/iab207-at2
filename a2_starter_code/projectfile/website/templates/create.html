@@ -8,69 +8,66 @@
 
   <main class="py-4">
     <div class="container">
-      <h1 class="h3 mb-3">Create or Update an Event</h1>
-      <form class="row g-3">
-        <div class="col-12">
-          <label class="form-label" for="eName">Event name</label>
-          <input id="eName" class="form-control" placeholder="e.g., Titans vs Hurricanes">
-        </div>
+        <h1 class="h3 mb-3">Create or Update an Event</h1>
+        <form method="POST" enctype="multipart/form-data" class="row g-3">
+            {{ form.hidden_tag() }}
 
-        <div class="col-12">
-          <label class="form-label" for="eDesc">Description</label>
-          <textarea id="eDesc" class="form-control" rows="4" placeholder="Brief description"></textarea>
-        </div>
+            <div class="col-12">
+                {{ form.eName.label(class="form-label") }}
+                {{ form.eName(class="form-control", placeholder="e.g., Titans vs Hurricanes") }}
+            </div>
 
-        <div class="col-md-6">
-          <label class="form-label" for="eCategory">Category</label>
-          <select id="eCategory" class="form-select">
-            <option>Football</option>
-            <option>Rugby</option>
-            <option>Cricket</option>
-            <option>Concert</option>
-          </select>
-        </div>
+            <div class="col-12">
+                {{ form.eDesc.label(class="form-label") }}
+                {{ form.eDesc(class="form-control", rows="4", placeholder="Brief description") }}
+            </div>
 
-        <div class="col-md-6">
-          <label class="form-label" for="eVenue">Venue</label>
-          <input id="eVenue" class="form-control" placeholder="e.g., Aurora Park Stadium">
-        </div>
+            <div class="col-md-6">
+                {{ form.eCategory.label(class="form-label") }}
+                {{ form.eCategory(class="form-select") }}
+            </div>
 
-        <div class="col-md-4">
-          <label class="form-label" for="eDate">Date</label>
-          <input type="date" id="eDate" class="form-control">
-        </div>
+            <div class="col-md-6">
+                {{ form.eVenue.label(class="form-label") }}
+                {{ form.eVenue(class="form-control", placeholder="e.g., Aurora Park Stadium") }}
+            </div>
 
-        <div class="col-md-4">
-          <label class="form-label" for="eStart">Start time</label>
-          <input type="time" id="eStart" class="form-control">
-        </div>
+            <div class="col-md-4">
+                {{ form.eDate.label(class="form-label") }}
+                {{ form.eDate(class="form-control") }}
+            </div>
 
-        <div class="col-md-4">
-          <label class="form-label" for="eEnd">End time</label>
-          <input type="time" id="eEnd" class="form-control">
-        </div>
+            <div class="col-md-4">
+                {{ form.eStart.label(class="form-label") }}
+                {{ form.eStart(class="form-control") }}
+            </div>
 
-        <div class="col-md-6">
-          <label class="form-label" for="eTickets">Tickets available</label>
-          <input type="number" min="1" id="eTickets" class="form-control" placeholder="e.g., 500">
-        </div>
+            <div class="col-md-4">
+                {{ form.eEnd.label(class="form-label") }}
+                {{ form.eEnd(class="form-control") }}
+            </div>
 
-        <div class="col-md-6">
-          <label class="form-label" for="eImageUrl">Image URL</label>
-          <input type="url" id="eImageUrl" class="form-control" placeholder="https://...">
-        </div>
+            <div class="col-md-6">
+                {{ form.eTickets.label(class="form-label") }}
+                {{ form.eTickets(class="form-control", placeholder="e.g., 500") }}
+            </div>
 
-        <div class="col-12">
-          <label for="eImageFile" class="form-label">Upload image (optional)</label>
-          <input class="form-control" type="file" id="eImageFile" accept="image/*">
-        </div>
+            <div class="col-md-6">
+                {{ form.eImageUrl.label(class="form-label") }}
+                {{ form.eImageUrl(class="form-control", placeholder="https://...") }}
+            </div>
 
-        <div class="col-12">
-          <button class="btn btn-primary" type="button">Save Event</button>
-          <a class="btn btn-outline-secondary" href="{{ url_for('main.index')}}">Cancel</a>
-        </div>
-      </form>
+            <div class="col-12">
+                {{ form.eImageFile.label(class="form-label") }}
+                {{ form.eImageFile(class="form-control") }}
+            </div>
+
+            <div class="col-12">
+                {{ form.submit(class="btn btn-primary") }}
+                <a class="btn btn-outline-secondary" href="{{ url_for('main.index') }}">Cancel</a>
+            </div>
+        </form>
     </div>
-  </main>
+</main>
 
    {% endblock %}
