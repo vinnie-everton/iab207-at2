@@ -61,27 +61,32 @@
           </section>
         </div>
 
+        {% with messages = get_flashed_messages(with_categories=true) %}
+          {% if messages %}
+            {% for category, message in messages %}
+              <div class="alert alert-{{ category }} alert-dismissible fade show" role="alert">
+                {{ message }}
+                <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+              </div>
+            {% endfor %}
+          {% endif %}
+        {% endwith %}
         <div class="col-lg-5">
           <div class="card">
             <div class="card-body">
               <h2 class="h5 mb-3">Book tickets</h2>
-              <form>
+              <form method="POST">
+                {{booking_form.hidden_tag() }}
                 <div class="mb-3">
-                  <label for="ticketQty" class="form-label">Number of tickets</label>
-                  <input type="number" min="1" max="10" value="1" id="ticketQty" class="form-control">
+                  {{booking_form.ticketQty.label(class="form-label")}}
+                  {{booking_form.ticketQty(class="form-control")}}
                 </div>
+
                 <div class="mb-3">
-                  <label for="ticketType" class="form-label">Ticket type</label>
-                  <select id="ticketType" class="form-select">
-                    <option>Standard - $15</option>
-                    <option>Premium - $30</option>
-                    <option>Family - $50</option>
-                  </select>
+                  {{booking_form.ticketType.label(class="form-label")}}
+                  {{booking_form.ticketType(class="form-select")}}
                 </div>
-                <div class="mb-3">
-                  <h3 class="h5 mb-3">Total Cost: $00.00</h3>
-                </div>
-                <button class="btn btn-primary w-100" type="button">Book Now</button>
+                {{booking_form.submit(class="btn btn-primary w-100")}}
               </form>
             </div>
           </div>
@@ -92,4 +97,5 @@
   </main>
 
       {% endblock %}
+
 
