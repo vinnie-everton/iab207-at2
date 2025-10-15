@@ -18,11 +18,13 @@ class Event(db.Model):
     category = db.Column(db.String(80)) #picklist
     description = db.Column(db.String(250))
     eventdate = db.Column (db.DateTime) #need to be adjusted
-    starttime = db.Column (db.DateTime) #need to be adjusted
-    endtime = db.Column (db.DateTime) #need to be adjusted
+    starttime = db.Column (db.Time) #need to be adjusted
+    endtime = db.Column (db.Time) #need to be adjusted
     venue = db.Column(db.String(80))
     image = db.Column(db.String(80))
     numticket = db.Column (db.Integer)
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'))
+    status = db.Column(db.String(20), default='Open')
     comments = db.relationship('Comment', backref='event')
     orders = db.relationship('Order', backref='event')
 
