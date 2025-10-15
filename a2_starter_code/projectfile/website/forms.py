@@ -35,6 +35,8 @@ class EventForm(FlaskForm):
     eCategory = SelectField("Category", choices=[("Football", "Football"), ("Rugby", "Rugby"), ("Cricket", "Cricket"), ("Concert", "Concert")], validators=[InputRequired()])
     eVenue = StringField("Venue", validators=[InputRequired(), Length(min=5, max=100)])
     eDate = DateField("Event Date", format='%Y-%m-%d', validators=[InputRequired()])
+    eStart = TimeField('Start Time', validators=[InputRequired()])
+    eEnd = TimeField('End Time', validators=[InputRequired()]) 
     eTickets = IntegerField("Tickets Available", validators=[InputRequired()])
     eImageUrl = StringField("Image Url", validators=[InputRequired(), Length(max=200)])
     eImageFile = FileField("Upload Image (optional)", validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
