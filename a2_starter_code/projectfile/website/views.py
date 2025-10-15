@@ -52,8 +52,6 @@ def history():
 @main_bp.route('/user')
 def user():
     return render_template("user.html")
-@main_bp.route('/event')
-def event():
 
 @main_bp.route('/event', methods=['GET', 'POST'])
 @login_required
@@ -153,3 +151,4 @@ def cancel_event(event_id):
     db.session.commit()
     flash('Event cancelled successfully!', 'success')
     return redirect(url_for('main.index'))
+
