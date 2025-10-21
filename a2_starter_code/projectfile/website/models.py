@@ -25,6 +25,9 @@ class Event(db.Model):
     numticket = db.Column (db.Integer)
     comments = db.relationship('Comment', backref='event')
     orders = db.relationship('Order', backref='event')
+    owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
+    status   = db.Column(db.String(20), default='Open') 
+    
 
 class Comment(db.Model):
     __tablename__ = 'comments'

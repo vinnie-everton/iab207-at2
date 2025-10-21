@@ -1,7 +1,11 @@
 {% extends "base.html" %}
   
-  {% block content %}
+<main class="py-5 position-relative" style="z-index: 2;">
+</main>
 
+
+
+{% block content %}
  <!-- Categories (static) -->
   <section id="categories" class="py-3 border-bottom bg-light">
     <div class="container">
@@ -16,76 +20,43 @@
     </div>
   </section>
 
-  <!-- Events -->
-  <main class="py-4">
-    <div class="container">
-      <div class="row g-4">
-        <div class="col-sm-6 col-lg-4">
-          <div class="card h-100">
-            <img src="{{ url_for('static', filename= 'img/event1.jpg') }}" class="card-img-top" alt="Titans vs Hurricanes">
-            <div class="card-body">
-              <h5 class="card-title">Titans vs Hurricanes</h5>
-              <p class="small text-muted">Sat 20 Sep, 7:00 PM — Aurora Park Stadium</p>
-              <span class="badge bg-success">Open</span>
-              <p class="mb-0 mt-2">Playoff clash with pre-game activities.</p>
-            </div>
-            <div class="card-footer bg-white">
-              <a href="{{ url_for('main.event')}}" class="btn btn-primary w-100">View details</a>
+ 
+  <section class="container py-5 event-grid position-relative" style="z-index: 3;">
+    <div class="row g-4">
+      {% for e in events %}
+        <div class="col-12 col-sm-6 col-lg-4">
+          <div class="card h-100 shadow-sm border border-primary">
+            {% if e.image %}
+              {% if e.image.startswith('http') %}
+                <img src="{{ e.image }}" class="card-img-top" alt="{{ e.eventname }}">
+              {% else %}
+                <img src="{{ url_for('static', filename='img/' ~ e.image) }}" class="card-img-top" alt="{{ e.eventname }}">
+              {% endif %}
+            {% endif %}
+            <div class="card-body d-flex flex-column">
+              <h5 class="card-title">{{ e.eventname }}</h5>
+              <p class="text-muted mb-2">{{ e.category }} • {{ e.venue }}</p>
+              <p class="small text-muted mb-3">
+                {% if e.eventdate %}{{ e.eventdate.strftime('%a %d %b %Y %I:%M %p') }}{% endif %}
+              </p>
+              <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="badge 
+                  {% if e.status == 'Open' %}bg-success
+                  {% elif e.status == 'Sold Out' %}bg-danger
+                  {% else %}bg-secondary{% endif %}">
+                  {{ e.status }}
+                </span>
+                <a href="{{ url_for('main.event', event_id=e.id) }}" class="btn btn-sm btn-primary">View</a>
+
+              </div>
             </div>
           </div>
         </div>
-
-        <div class="col-sm-6 col-lg-4">
-          <div class="card h-100">
-            <img src="{{ url_for('static', filename= 'img/event2.jpg') }}" class="card-img-top" alt="Ironclad Clash: Wolves v Bears">
-            
-            <div class="card-body">
-              <h5 class="card-title">Ironclad Clash: Wolves v Bears</h5>
-              <p class="small text-muted">Sun 10 Aug, 4:00 PM — Granite Dome Arena</p>
-              <span class="badge bg-secondary">Inactive</span>
-              <p class="mb-0 mt-2">Classic rivalry. Date has passed.</p>
-            </div>
-            <div class="card-footer bg-white">
-              <a href="event.html" class="btn btn-primary w-100">View details</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-sm-6 col-lg-4">
-          <div class="card h-100">
-            <img src="{{ url_for('static', filename= 'img/event3.jpg') }}" class="card-img-top" alt="Skyline T20 Showdown">
-            <div class="card-body">
-              <h5 class="card-title">Skyline T20 Showdown</h5>
-              <p class="small text-muted">Fri 12 Sep, 6:30 PM — Summit Field</p>
-              <span class="badge bg-danger">Sold Out</span>
-              <p class="mb-0 mt-2">Explosive batting under lights.</p>
-            </div>
-            <div class="card-footer bg-white">
-              <a href="event.html" class="btn btn-primary w-100">View details</a>
-            </div>
-          </div>
-        </div>
-
-        <div class="col-sm-6 col-lg-4">
-          <div class="card h-100">
-            <img src= "{{ url_for('static', filename= 'img/event4.jpg') }}" class="card-img-top" alt="EchoFest: Summer Soundwave">
-            <div class="card-body">
-              <h5 class="card-title">EchoFest: Summer Soundwave</h5>
-              <p class="small text-muted">Thu 25 Sep, 8:00 PM — Harborlight Grounds</p>
-              <span class="badge bg-dark">Cancelled</span>
-              <p class="mb-0 mt-2">Headline acts and stage effects.</p>
-            </div>
-            <div class="card-footer bg-white">
-              <a href="event.html" class="btn btn-primary w-100">View details</a>
-            </div>
-          </div>
-        </div>
-
-      </div>
+      {% endfor %}
     </div>
-  </main>
+  </section>
+{% endblock %}
 
-  {% endblock %}
 
   
 

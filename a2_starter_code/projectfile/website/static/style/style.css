@@ -12,3 +12,7 @@ body { background-color: #f8f9fa; }
 .card img { object-fit: cover; height: 180px; }
 
 footer .small { color: #6c757d; }
+
+.hero { position: relative; z-index: 1; }
+.event-grid { position: relative; z-index: 3; }
+.card-img-top { height: 200px; object-fit: cover; } /* prevents huge images from overlapping */
