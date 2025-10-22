@@ -93,6 +93,22 @@
           <h2 class="h5 mb-3">Book tickets</h2>
           <form method="post" action="{{ url_for('main.event', event_id=event.id) }}">
             {% if event %}
+          
+          <!-- Price Information -->
+          <div class="mb-3 p-3 bg-light rounded">
+            <h6 class="mb-2">Ticket Prices:</h6>
+            <div class="small">
+              <div><strong>Standard:</strong> $50 per ticket</div>
+              <div><strong>Premium:</strong> $100 per ticket</div>
+              <div><strong>Family:</strong> $150 per ticket</div>
+            </div>
+            <div class="mt-2 text-muted small">
+              <em>Total price will be calculated when you book</em>
+            </div>
+          </div>
+
+          <form method="post" action="{{ url_for('main.event_detail', event_id=event.id) if event and event.id else url_for('main.event') }}">
+            {% if event and event.id %}
               <input type="hidden" name="event_id" value="{{ event.id }}">
             {% endif %}
             {{ booking_form.hidden_tag() }}
@@ -100,11 +116,14 @@
             <div class="mb-3">
               {{ booking_form.ticketQty.label(class="form-label") }}
               {{ booking_form.ticketQty(class="form-control") }}
+              <div class="form-text">Enter number of tickets (1-10)</div>
             </div>
             <div class="mb-3">
               {{ booking_form.ticketType.label(class="form-label") }}
               {{ booking_form.ticketType(class="form-select") }}
+              <div class="form-text">Choose your ticket type</div>
             </div>
+            
             {{ booking_form.submit(class="btn btn-primary w-100") }}
           </form>
         </div>
