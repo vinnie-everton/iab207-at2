@@ -1,6 +1,6 @@
 from flask import Blueprint, render_template, url_for, flash, redirect, request, abort
 from flask_login import login_required, current_user
-from .forms import BookingForm, CommentForm
+from .forms import BookingForm, CommentForm, relax_for_edit
 from .models import Order, Comment
 from .import db
 from datetime import datetime, date, time
@@ -154,7 +154,7 @@ def create():
             starttime=start_dt,     
             endtime=end_dt,     
             numticket=form.eTickets.data,
-            image=form.eImageUrl.data,
+            image=form.eImageFile.data,
             owner_id=current_user.id,
             status=status
             
@@ -190,6 +190,10 @@ def edit_event(event_id):
         return redirect(url_for('main.event'))
     
     form = EventForm(obj=event)
+
+    relax_for_edit(form)
+
+
     if form.validate_on_submit():
         event.eventname = form.eName.data
         event.description = form.eDesc.data
@@ -200,10 +204,10 @@ def edit_event(event_id):
         event.starttime = event_dt
         event.endtime   = datetime.combine(form.eDate.data, form.eEnd.data or time.max)
         event.numticket = form.eTickets.data
-        event.image = form.eImageUrl.data
+        event.image = form.eImageFile.data
         
         # Logic for EVENT STATUS
-        if event.eventdate < date.today():
+        if event.eventdate.date() < date.today():
             event.status = 'Inactive'
         elif event.numticket == 0:
             event.status = 'Sold Out'

@@ -2,6 +2,7 @@ from flask_wtf import FlaskForm
 from wtforms.fields import TextAreaField, SubmitField, StringField, PasswordField, IntegerField, SelectField, DateField, TimeField, FileField
 from wtforms.validators import InputRequired, Length, Email, EqualTo
 from flask_wtf.file import FileField, FileAllowed, FileRequired
+from wtforms.validators import Optional
 
 # creates the login information
 class LoginForm(FlaskForm):
@@ -38,9 +39,27 @@ class EventForm(FlaskForm):
     eStart = TimeField("Start Time", format='%H:%M', validators=[InputRequired()])
     eEnd   = TimeField("End Time",   format='%H:%M', validators=[InputRequired()])
     eTickets = IntegerField("Tickets Available", validators=[InputRequired()])
-    eImageUrl = StringField("Image Url", validators=[InputRequired(), Length(max=200)])
     eImageFile = FileField("Upload Image (optional)", validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
     submit = SubmitField("Save Event")
+
+def relax_for_edit(form):
+    """
+    Replaces InputRequired validators with Optional() so blank fields
+    don't break validation during edit.
+    """
+    for fname in [
+        "eName", "eDesc", "eVenue", "eDate",
+        "eStart", "eEnd", "eTickets", "eImageFile"
+    ]:
+        field = getattr(form, fname, None)
+        if field:
+            # Remove InputRequired validators
+            field.validators = [
+                v for v in field.validators
+                if v.__class__.__name__ != "InputRequired"
+            ]
+            # Add Optional to allow blanks
+            field.validators.append(Optional())
 
 
 class CommentForm(FlaskForm):
