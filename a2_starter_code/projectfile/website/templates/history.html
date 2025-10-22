@@ -18,6 +18,7 @@
     <table class="table table-striped align-middle">
       <thead>
         <tr>
+          <th scope="col">Order ID</th>
           <th scope="col">Event</th>
           <th scope="col">Date</th>
           <th scope="col">Tickets</th>
@@ -28,6 +29,7 @@
       <tbody>
         {% for b in bookings %}
         <tr>
+          <td><strong>#{{ b.id }}</strong></td>
           <td class="d-flex align-items-center gap-3">
             {% if b.image %}
             <img src="{{ url_for('static', filename='img/' ~ b.image) }}" alt="" width="64" height="64" class="rounded object-fit-cover">
