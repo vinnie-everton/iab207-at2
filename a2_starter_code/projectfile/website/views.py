@@ -14,14 +14,65 @@ def index():
     #return '<h1>Starter code for assignment 3<h1>'
     return render_template('index.html')
 
+<<<<<<< Updated upstream
+=======
+@main_bp.route('/history')
+@login_required
+def history():
+    # Join Orders to Events for the current user
+    rows = (
+        db.session.query(Order, Event)
+        .join(Event, Order.event_id == Event.id)
+        .filter(Order.user_id == current_user.id)
+        .order_by(Order.date.desc())
+        .all()
+    )
+    # Shape the data exactly as the template expects
+    bookings = [
+        {
+            "id": o.id,  # used by the View button
+            "title": getattr(e, "eventname", "Event"),
+            "venue": e.venue,
+            "date": o.date or getattr(e, "eventdate", None),
+            "tickets": o.quantity,  # template expects 'tickets'
+            "status": getattr(e, "status", "Confirmed"),
+            "image": e.image,
+        }
+        for (o, e) in rows
+    ]
+    return render_template('history.html', bookings=bookings)
+
+@main_bp.route('/booking/<int:booking_id>')
+@login_required
+def view_booking(booking_id):
+    # Ensure the booking belongs to the current user
+    order = Order.query.filter_by(id=booking_id, user_id=current_user.id).first_or_404()
+    event = Event.query.get_or_404(order.event_id) if order.event_id else None
+
+    # Reuse your existing event page with the booking form
+    form = BookingForm()
+    return render_template('event.html', event=event, booking_form=form)
+
+    
+@main_bp.route('/search')
+def search():
+    if request.args['search'] and request.args['search'] != "":
+        print(request.args['search'])
+        query = "%" + request.args['search'] + "%"
+        destinations = db.session.scalars(db.select(Event).where(Event.description.like(query)))
+        return render_template('index.html', destinations=destinations)
+    else:
+        return redirect(url_for('main.index'))
+>>>>>>> Stashed changes
 
 @main_bp.route('/user')
 def user():
     return render_template("user.html")
 
-@main_bp.route('/event', methods=['GET', 'POST'])
+@main_bp.route('/event', methods=['GET'])
 @login_required
 def event():
+<<<<<<< Updated upstream
     form = BookingForm()
     if form.validate_on_submit():
         new_order = Order(
@@ -34,12 +85,18 @@ def event():
         flash(f'Booking successful! Your order ID is {new_order.id}', 'success')
         return redirect(url_for('main.history'))
     return render_template('event.html', booking_form=form)
+=======
+    # Show all events or redirect to a specific event
+    events = Event.query.all()
+    return render_template('index.html', events=events)
 
-@main_bp.route('/history')
-@login_required
-def history():
-    bookings = Order.query.filter_by(user_id=current_user.id).all()
-    return render_template('history.html', bookings=bookings)
+
+
+
+
+>>>>>>> Stashed changes
+
+# Duplicate history route removed - using the one above that joins with Events
 
 @main_bp.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -72,6 +129,45 @@ def create():
         return redirect(url_for('main.event'))
     return render_template('create.html', event_form=form)
 
+<<<<<<< Updated upstream
+=======
+
+
+
+
+@main_bp.route('/event/<int:event_id>', methods=['GET', 'POST'])
+@login_required
+def event_detail(event_id):
+    event = Event.query.get_or_404(event_id)
+    form = BookingForm()
+    
+    if form.validate_on_submit():
+        # Calculate price based on ticket type
+        ticket_prices = {"Standard": 50, "Premium": 100, "Family": 150}
+        ticket_type = form.ticketType.data
+        price = ticket_prices.get(ticket_type, 50) * form.ticketQty.data
+
+        new_order = Order(
+            user_id=current_user.id,
+            quantity=form.ticketQty.data,
+            ticket_type=ticket_type,
+            price=price,
+            event_id=event_id,  # Now we know the specific event ID
+        )
+
+        db.session.add(new_order)
+        db.session.commit()
+        flash(f'Booking successful! Your order ID is {new_order.id}', 'success')
+        return redirect(url_for('main.history'))
+    
+    return render_template('event.html', event=event, booking_form=form)
+
+
+
+
+
+# originally /event/<int:event_id/edit>
+>>>>>>> Stashed changes
 @main_bp.route('/event/<int:event_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_event(event_id):

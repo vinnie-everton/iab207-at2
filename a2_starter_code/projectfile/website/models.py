@@ -17,7 +17,11 @@ class Event(db.Model):
     eventname = db.Column(db.String(80)) #
     category = db.Column(db.String(80)) #picklist
     description = db.Column(db.String(250))
+<<<<<<< Updated upstream
     eventdate = db.Column (db.DateTime) #need to be adjusted
+=======
+    eventdate = db.Column (db.Date) #need to be adjusted
+>>>>>>> Stashed changes
     starttime = db.Column (db.Time) #need to be adjusted
     endtime = db.Column (db.Time) #need to be adjusted
     venue = db.Column(db.String(80))
@@ -42,6 +46,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Integer) #needs to be adjusted
     quantity = db.Column(db.Integer)
+    ticket_type = db.Column(db.String(20)) # Standard, Premium, Family
     date = db.Column (db.DateTime, default=lambda: datetime.now(timezone.utc)) #need to be adjusted
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
