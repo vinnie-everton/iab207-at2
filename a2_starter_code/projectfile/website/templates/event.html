@@ -57,49 +57,41 @@
       {% endif %}
 
       <!-- Comments -->
-      <section class="mt-5">
-        <h2 class="h5">Comments</h2>
-        <div class="vstack gap-3 mb-3">
-          <div class="card border-0 shadow-sm">
-            <div class="card-body">
-              <div class="d-flex justify-content-between">
-                <strong>Sam W</strong><span class="text-muted small">Posted: 12 Aug</span>
-              </div>
-              <p class="mb-0">North stand has the best atmosphere!</p>
-            </div>
-          </div>
-          <div class="card border-0 shadow-sm">
-            <div class="card-body">
-              <div class="d-flex justify-content-between">
-                <strong>Jess</strong><span class="text-muted small">Posted: 15 Aug</span>
-              </div>
-              <p class="mb-0">Is there a family bay?</p>
-            </div>
-          </div>
-        </div>
+      <hr>
+      <h4>Comments</h4>
 
-        <form class="row g-2">
-          <div class="col-md-4">
-            <label class="form-label" for="cName">Your name</label>
-            <input id="cName" class="form-control" placeholder="Name">
-          </div>
-          <div class="col-md-8">
-            <label class="form-label" for="cText">Comment</label>
-            <input id="cText" class="form-control" placeholder="Write a comment">
-          </div>
-          <div class="col-12">
-            <button class="btn btn-primary mt-1" type="button">Post comment</button>
-          </div>
-        </form>
-      </section>
-    </div>
+      {% if current_user.is_authenticated %}
+      <form method="POST" action="{{ url_for('main.event', event_id=event.id) }}">
+        {{ comment_form.hidden_tag() }}
+        <div class="mb-3">
+          {{ comment_form.text.label(class="form-label") }}
+          {{ comment_form.text(class="form-control", rows="3", placeholder="Write your comment...") }}
+        </div>
+        {{ comment_form.submit(class="btn btn-primary btn-sm") }}
+      </form>
+      {% else %}
+      <p class="text-muted">Please <a href="{{ url_for('auth.login') }}">log in</a> to comment.</p>
+      {% endif %}
+
+      <ul class="list-group mt-3">
+        {% for c in comments %}
+          <li class="list-group-item">
+            <div class="fw-bold">{{ c.user.name }}</div>
+            <div class="small text-muted">{{ c.created_at.strftime('%d %b %Y %H:%M') }}</div>
+            <div>{{ c.text }}</div>
+          </li>
+        {% else %}
+          <li class="list-group-item text-muted">No comments yet. Be the first!</li>
+        {% endfor %}
+      </ul>
+
 
     <!-- RIGHT: Booking card -->
     <div class="col-lg-5">
       <div class="card shadow-sm">
         <div class="card-body">
           <h2 class="h5 mb-3">Book tickets</h2>
-          <form method="post" action="{{ url_for('main.event') }}">
+          <form method="post" action="{{ url_for('main.event', event_id=event.id) }}">
             {% if event %}
               <input type="hidden" name="event_id" value="{{ event.id }}">
             {% endif %}

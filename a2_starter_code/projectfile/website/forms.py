@@ -42,3 +42,11 @@ class EventForm(FlaskForm):
     eImageFile = FileField("Upload Image (optional)", validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
     submit = SubmitField("Save Event")
 
+
+class CommentForm(FlaskForm):
+    text = TextAreaField(
+        "Add a comment",
+        validators=[InputRequired(), Length(max=400)]
+    )
+    submit = SubmitField("Post")
+

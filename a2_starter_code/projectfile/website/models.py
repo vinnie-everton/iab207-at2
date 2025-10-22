@@ -22,11 +22,16 @@ class Event(db.Model):
     endtime = db.Column (db.DateTime) #need to be adjusted
     venue = db.Column(db.String(80))
     image = db.Column(db.String(80))
-    numticket = db.Column (db.Integer)
-    comments = db.relationship('Comment', backref='event')
+    numticket = db.Column (db.Integer)    
     orders = db.relationship('Order', backref='event')
     owner_id = db.Column(db.Integer, db.ForeignKey('users.id'), nullable=False)
     status   = db.Column(db.String(20), default='Open') 
+    comments = db.relationship(
+    'Comment',
+    backref='event',
+    lazy='dynamic',
+    cascade='all, delete-orphan',
+    order_by="desc(Comment.created_at)")
     
 
 class Comment(db.Model):

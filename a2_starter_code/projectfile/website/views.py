@@ -1,7 +1,7 @@
 from flask import Blueprint, render_template, url_for, flash, redirect, request, abort
 from flask_login import login_required, current_user
-from .forms import BookingForm
-from .models import Order
+from .forms import BookingForm, CommentForm
+from .models import Order, Comment
 from .import db
 from datetime import datetime, date, time
 from .forms import EventForm
@@ -68,27 +68,54 @@ def search():
 def user():
     return render_template("user.html")
 
-@main_bp.route('/event', methods=['GET', 'POST'])
-@login_required
-def event():
+@main_bp.route('/event/<int:event_id>', methods=['GET', 'POST'])
+def event(event_id):
     form = BookingForm()
-    
-    
-    if form.validate_on_submit():
-        event_id = request.form.get('event_id', type=int)  # may be None if not provided
+    comment_form = CommentForm()
 
+    # Load the event row; avoid variable name 'event' to not shadow the function
+    ev = Event.query.get_or_404(event_id)
+
+   # --- Handle comment submission ---
+    if comment_form.submit.data and comment_form.validate_on_submit():
+        if not current_user.is_authenticated:
+            flash('Please log in to post a comment.', 'warning')
+            return redirect(url_for('auth.login'))
+        
+        new_comment = Comment(
+            text=comment_form.text.data.strip(),
+            user_id=current_user.id,
+            event_id=ev.id
+        )
+        db.session.add(new_comment)
+        db.session.commit()
+        flash('Comment posted!', 'success')
+        return redirect(url_for('main.event', event_id=ev.id))
+
+
+    # Pull comments for this event, newest first (ordered by relationship)
+    comments = ev.comments.all()
+
+    # --- Handle booking submission (unchanged, just uses ev.id) ---
+    if form.submit.data and form.validate_on_submit():
         new_order = Order(
             user_id=current_user.id,
             quantity=form.ticketQty.data,
-            price=0,                # or compute from form.ticketType if you want
-            event_id=event_id,           # helps history/view to link back to the event
+            price=0,          # TODO: compute from your ticket type if needed
+            event_id=ev.id
         )
-
         db.session.add(new_order)
         db.session.commit()
         flash(f'Booking successful! Your order ID is {new_order.id}', 'success')
         return redirect(url_for('main.history'))
-    return render_template('event.html', event=event, booking_form=form)
+
+    return render_template(
+        'event.html',
+        event=ev,                    # pass DB object as "event"
+        comment_form=comment_form,
+        comments=comments,
+        booking_form=form
+    )
 
 
 
