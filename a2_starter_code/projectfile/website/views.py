@@ -16,7 +16,7 @@ def index():
     events = Event.query.order_by(asc(Event.eventdate)).all()
     return render_template('index.html', events=events)
 
-#@main_bp.route('/history')
+@main_bp.route('/history')
 @login_required
 def history():
     # Join Orders to Events for the current user
@@ -28,18 +28,32 @@ def history():
         .all()
     )
     # Shape the data exactly as the template expects
-    bookings = [
-        {
+    bookings = []
+    for (o, e) in rows:
+        # Determine ticket type based on price per ticket
+        price = getattr(o, "price", 0.0)
+        quantity = o.quantity if o.quantity > 0 else 1
+        price_per_ticket = price / quantity
+        
+        if price_per_ticket == 150.0:
+            ticket_type = "Family"
+        elif price_per_ticket == 100.0:
+            ticket_type = "Premium"
+        else:
+            ticket_type = "Standard"
+        
+        booking = {
             "id": o.id,  # used by the View button
             "title": getattr(e, "eventname", "Event"),
             "venue": e.venue,
             "date": o.date or getattr(e, "eventdate", None),
             "tickets": o.quantity,  # template expects 'tickets'
+            "ticket_type": ticket_type,  # determined from price
+            "price": price,
             "status": getattr(e, "status", "Confirmed"),
             "image": e.image,
         }
-        for (o, e) in rows
-    ]
+        bookings.append(booking)
     return render_template('history.html', bookings=bookings)
 
 @main_bp.route('/booking/<int:booking_id>')
@@ -96,14 +110,57 @@ def event(event_id):
     # Pull comments for this event, newest first (ordered by relationship)
     comments = ev.comments.all()
 
-    # --- Handle booking submission (unchanged, just uses ev.id) ---
+    # --- Handle booking submission ---
     if form.submit.data and form.validate_on_submit():
+        # Check if user is authenticated
+        if not current_user.is_authenticated:
+            flash('Please log in to make a booking.', 'warning')
+            return redirect(url_for('auth.login'))
+        
+        # Check event status before allowing booking
+        if ev.status == 'Cancelled':
+            flash('This event has been cancelled and is no longer available for booking.', 'danger')
+            return redirect(url_for('main.event', event_id=ev.id))
+        elif ev.status == 'Sold Out':
+            flash('This event is sold out. No tickets are available.', 'warning')
+            return redirect(url_for('main.event', event_id=ev.id))
+        elif ev.status == 'Inactive':
+            flash('This event has already occurred and is no longer available for booking.', 'warning')
+            return redirect(url_for('main.event', event_id=ev.id))
+        elif ev.status != 'Open':
+            flash('This event is not currently available for booking.', 'warning')
+            return redirect(url_for('main.event', event_id=ev.id))
+        
+        # Check if enough tickets are available
+        if ev.numticket < form.ticketQty.data:
+            flash(f'Only {ev.numticket} tickets are available. Please select fewer tickets.', 'warning')
+            return redirect(url_for('main.event', event_id=ev.id))
+        
+        # Calculate price based on ticket type
+        ticket_prices = {
+            'Standard': 50.0,
+            'Premium': 100.0,
+            'Family': 150.0
+        }
+        ticket_type = form.ticketType.data
+        unit_price = ticket_prices.get(ticket_type, 50.0)
+        total_price = unit_price * form.ticketQty.data
+        
+        # Create the booking (temporarily without ticket_type until DB is fixed)
         new_order = Order(
             user_id=current_user.id,
             quantity=form.ticketQty.data,
-            price=0,          # TODO: compute from your ticket type if needed
+            price=total_price,
             event_id=ev.id
         )
+        
+        # Update available ticket count
+        ev.numticket -= form.ticketQty.data
+        
+        # Update event status if sold out
+        if ev.numticket == 0:
+            ev.status = 'Sold Out'
+        
         db.session.add(new_order)
         db.session.commit()
         flash(f'Booking successful! Your order ID is {new_order.id}', 'success')
@@ -116,17 +173,6 @@ def event(event_id):
         comments=comments,
         booking_form=form
     )
-
-
-
-
-
-
-@main_bp.route('/history')
-@login_required
-def history():
-    bookings = Order.query.filter_by(user_id=current_user.id).all()
-    return render_template('history.html', bookings=bookings)
 
 @main_bp.route('/create', methods=['GET', 'POST'])
 @login_required
@@ -162,22 +208,8 @@ def create():
         db.session.add(new_event)
         db.session.commit()
         flash('Event created successfully!', 'success')
-        return redirect(url_for('main.event'))
+        return redirect(url_for('main.index'))
     return render_template('create.html', form=form, event_form=form)
-
-
-
-
-
-@main_bp.route('/event/<int:event_id>', methods=['GET'])
-@login_required
-def event_detail(event_id):
-    event = Event.query.get_or_404(event_id)
-    form = BookingForm()
-    return render_template('event.html', event=event, booking_form=form)
-
-
-
 
 
 # originally /event/<int:event_id/edit>
