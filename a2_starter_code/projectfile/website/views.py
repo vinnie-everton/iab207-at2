@@ -7,6 +7,9 @@ from datetime import datetime, date, time
 from .forms import EventForm
 from .models import Event
 from sqlalchemy import asc, desc
+from werkzeug.utils import secure_filename
+from flask import current_app
+import os
 
 main_bp = Blueprint('main', __name__)
 
@@ -184,6 +187,22 @@ def create():
         start_dt = event_dt
         end_dt = datetime.combine(form.eDate.data, form.eEnd.data or time.max)
 
+
+        img_filename = 'default.jpg'  
+        if form.eImageFile.data:
+            image_file = form.eImageFile.data
+            if image_file.filename != '':
+                filename = secure_filename(image_file.filename)
+                # Make filename unique by adding timestamp
+                unique_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}"
+                filepath = os.path.join(current_app.root_path, 'static', 'img', unique_filename)
+                image_file.save(filepath)
+                img_filename = unique_filename
+
+
+
+
+
         # Logic for EVENT STATUS
         if form.eDate.data<date.today():
             status = 'Inactive'           
@@ -200,7 +219,7 @@ def create():
             starttime=start_dt,     
             endtime=end_dt,     
             numticket=form.eTickets.data,
-            image=form.eImageFile.data,
+            image=img_filename,
             owner_id=current_user.id,
             status=status
             
