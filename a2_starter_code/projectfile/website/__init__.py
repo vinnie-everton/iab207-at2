@@ -3,6 +3,7 @@ from flask import Flask, render_template
 from flask_bootstrap import Bootstrap5
 from flask_sqlalchemy import SQLAlchemy
 from flask_login import LoginManager
+import os
 
 db = SQLAlchemy()
 
@@ -16,6 +17,10 @@ def create_app():
     app.secret_key = 'somesecretkey'
     # set the app configuration data 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sitedata.sqlite'
+    app.config['UPLOAD_FOLDER'] = 'website/static/img'
+    app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  
+    
+    os.makedirs(os.path.join(app.root_path, 'static', 'img'), exist_ok=True)
     # initialise db with flask app
     db.init_app(app)
 
