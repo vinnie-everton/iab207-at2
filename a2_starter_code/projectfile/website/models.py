@@ -7,6 +7,8 @@ class User(db.Model, UserMixin):
     id = db.Column(db.Integer,primary_key=True)
     name = db.Column(db.String(100), index=True, unique=True, nullable=False)
     emailid = db.Column(db.String(100), index=True, nullable=False)
+    address = db.Column(db.String(50))
+    contact = db.Column(db.Integer)
     password_hash = db.Column(db.String(255), nullable=False)
     comments = db.relationship('Comment', backref='user')
     orders = db.relationship('Order', backref='user')
