@@ -11,11 +11,11 @@
     <div class="container">
       <div class="d-flex flex-wrap align-items-center gap-2">
         <span class="small text-uppercase fw-semibold">Categories:</span>
-        <button class="btn btn-outline-primary btn-sm">All</button>
-        <button class="btn btn-outline-primary btn-sm">Football</button>
-        <button class="btn btn-outline-primary btn-sm">Rugby</button>
-        <button class="btn btn-outline-primary btn-sm">Cricket</button>
-        <button class="btn btn-outline-primary btn-sm">Concert</button>
+        <a href="{{ url_for('main.filter', category='All') }}" class="btn btn-outline-primary btn-sm {% if selected_category == 'All' %}active{% endif %}">All</a>
+        <a href="{{ url_for('main.filter', category='Football') }}" class="btn btn-outline-primary btn-sm {% if selected_category == 'Football' %}active{% endif %}">Football</a>
+        <a href="{{ url_for('main.filter', category='Rugby') }}" class="btn btn-outline-primary btn-sm {% if selected_category == 'Rugby' %}active{% endif %}">Rugby</a>
+        <a href="{{ url_for('main.filter', category='Cricket') }}" class="btn btn-outline-primary btn-sm {% if selected_category == 'Cricket' %}active{% endif %}">Cricket</a>
+        <a href="{{ url_for('main.filter', category='Concert') }}" class="btn btn-outline-primary btn-sm {% if selected_category == 'Concert' %}active{% endif %}">Concert</a>
       </div>
     </div>
   </section>
@@ -68,5 +68,6 @@
 
 
   
+
 
 
