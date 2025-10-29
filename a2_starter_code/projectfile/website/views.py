@@ -6,7 +6,7 @@ from .import db
 from datetime import datetime, date, time
 from .forms import EventForm
 from .models import Event
-from sqlalchemy import asc, desc
+from sqlalchemy import asc, desc, func
 from werkzeug.utils import secure_filename
 from flask import current_app
 import os
@@ -86,6 +86,15 @@ def search():
         return render_template('index.html', search_query=search_query)
     else:
         return render_template('index.html', events=events)
+
+@main_bp.route('/filter')
+def filter(): #function regarding filters
+    selected_category = request.args.get('category') 
+    event_query = db.select(Event) # initial sql event query
+    if selected_category != 'All': #if selected category button is not All query for the specific button 
+        event_query = event_query.where(func.lower(Event.category) == selected_category.lower())
+    events = list(db.session.scalars(event_query))
+    return render_template('index.html', events=events, selected_category=selected_category)
 
 @main_bp.route('/user')
 def user():
@@ -288,6 +297,7 @@ def cancel_event(event_id):
     db.session.commit()
     flash('Event cancelled successfully!', 'success')
     return redirect(url_for('main.index'))
+
 
 
 
