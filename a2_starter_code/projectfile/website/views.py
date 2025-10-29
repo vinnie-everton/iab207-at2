@@ -73,13 +73,19 @@ def view_booking(booking_id):
     
 @main_bp.route('/search')
 def search():
-    if request.args['search'] and request.args['search'] != "":
-        print(request.args['search'])
-        query = "%" + request.args['search'] + "%"
-        events = db.session.scalars(db.select(Event).where(Event.eventname.like(query)))
-        return render_template('index.html', events=events)
-    else:
+    search_query = request.args.get('search', '').strip()
+
+    if not search_query:
         return redirect(url_for('main.index'))
+
+    query = f"%{search_query}%"
+    events = list(db.session.scalars(db.select(Event).where(Event.eventname.like(query))))
+
+    if not events:
+        # No events found — show a message instead
+        return render_template('index.html', search_query=search_query)
+    else:
+        return render_template('index.html', events=events)
 
 @main_bp.route('/user')
 def user():
@@ -282,6 +288,7 @@ def cancel_event(event_id):
     db.session.commit()
     flash('Event cancelled successfully!', 'success')
     return redirect(url_for('main.index'))
+
 
 
 
