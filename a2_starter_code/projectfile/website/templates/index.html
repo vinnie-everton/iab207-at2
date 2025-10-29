@@ -55,8 +55,18 @@
       {% endfor %}
     </div>
   </section>
+
+  {% if search_query %}
+    <section class="container py-5 event-grid position-relative" style="z-index: 3;">
+      <div class="row g-4">
+        <div class="container text-center small alert alert-warning">No events found matching {{search_query}}</div>
+      </div>
+    </section>
+  {% endif %}
+
 {% endblock %}
 
 
   
+
 
