@@ -50,6 +50,7 @@ class Order(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     price = db.Column(db.Integer) #needs to be adjusted
     quantity = db.Column(db.Integer)
+    type = db.Column(db.Integer)
     date = db.Column (db.DateTime, default=lambda: datetime.now(timezone.utc)) #need to be adjusted
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
