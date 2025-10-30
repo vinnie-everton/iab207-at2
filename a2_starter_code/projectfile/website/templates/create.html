@@ -15,46 +15,110 @@
             <div class="col-12">
                 {{ form.eName.label(class="form-label") }}
                 {{ form.eName(class="form-control", placeholder="e.g., Titans vs Hurricanes") }}
+                {% if form.eName.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.eName.errors %}
+                            <small>{{ error }}</small><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <div class="col-12">
                 {{ form.eDesc.label(class="form-label") }}
                 {{ form.eDesc(class="form-control", rows="4", placeholder="Brief description") }}
+                {% if form.eDesc.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.eDesc.errors %}
+                            <small>{{ error }}</small><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <div class="col-md-6">
                 {{ form.eCategory.label(class="form-label") }}
                 {{ form.eCategory(class="form-select") }}
+                {% if form.eCategory.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.eCategory.errors %}
+                            <small>{{ error }}</small><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <div class="col-md-6">
                 {{ form.eVenue.label(class="form-label") }}
                 {{ form.eVenue(class="form-control", placeholder="e.g., Aurora Park Stadium") }}
+                {% if form.eVenue.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.eVenue.errors %}
+                            <small>{{ error }}</small><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <div class="col-md-4">
                 {{ form.eDate.label(class="form-label") }}
                 {{ form.eDate(class="form-control") }}
+                {% if form.eDate.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.eDate.errors %}
+                            <small>{{ error }}</small><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <div class="col-md-4">
                 {{ form.eStart.label(class="form-label") }}
                 {{ form.eStart(class="form-control") }}
+                {% if form.eStart.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.eStart.errors %}
+                            <small>{{ error }}</small><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <div class="col-md-4">
                 {{ form.eEnd.label(class="form-label") }}
                 {{ form.eEnd(class="form-control") }}
+                {% if form.eEnd.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.eEnd.errors %}
+                            <small>{{ error }}</small><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>
 
             <div class="col-md-6">
                 {{ form.eTickets.label(class="form-label") }}
                 {{ form.eTickets(class="form-control", placeholder="e.g., 500") }}
+                {% if form.eTickets.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.eTickets.errors %}
+                            <small>{{ error }}</small><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
             </div>  
 
             <div class="col-12">
                 {{ form.eImageFile.label(class="form-label") }}
                 {{ form.eImageFile(class="form-control") }}
+                {% if form.eImageFile.errors %}
+                    <div class="text-danger mt-1">
+                        {% for error in form.eImageFile.errors %}
+                            <small>{{ error }}</small><br>
+                        {% endfor %}
+                    </div>
+                {% endif %}
+                <small class="form-text text-muted">Allowed formats: JPG, PNG, JPEG</small>
             </div>
 
             <div class="col-12">

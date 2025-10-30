@@ -42,7 +42,7 @@ class EventForm(FlaskForm):
     eStart = TimeField("Start Time", format='%H:%M', validators=[InputRequired()])
     eEnd   = TimeField("End Time",   format='%H:%M', validators=[InputRequired()])
     eTickets = IntegerField("Tickets Available", validators=[InputRequired()])
-    eImageFile = FileField("Upload Image (optional)", validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Images only!')])
+    eImageFile = FileField("Upload Image (optional)", validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Only JPG, PNG, and JPEG files are allowed!')])
     submit = SubmitField("Save Event")
 
 def relax_for_edit(form):

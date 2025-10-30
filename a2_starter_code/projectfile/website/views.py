@@ -30,20 +30,12 @@ def history():
         .order_by(Order.date.desc())
         .all()
     )
-    # Shape the data exactly as the template expects
+    
     bookings = []
     for (o, e) in rows:
-        # Determine ticket type based on price per ticket
-        price = getattr(o, "price", 0.0)
-        quantity = o.quantity if o.quantity > 0 else 1
-        price_per_ticket = price / quantity
-        
-        if price_per_ticket == 150.0:
-            ticket_type = "Family"
-        elif price_per_ticket == 100.0:
-            ticket_type = "Premium"
-        else:
-            ticket_type = "Standard"
+        # Ticket type mapping
+        type_mapping = {1: "Standard", 2: "Premium", 3: "Family"}
+        ticket_type = type_mapping.get(o.type, "Standard")
         
         booking = {
             "id": o.id,  # used by the View button
@@ -51,8 +43,8 @@ def history():
             "venue": e.venue,
             "date": o.date or getattr(e, "eventdate", None),
             "tickets": o.quantity,  # template expects 'tickets'
-            "ticket_type": ticket_type,  # determined from price
-            "price": price,
+            "ticket_type": ticket_type,  # mapped from type field
+            "price": getattr(o, "price", 0.0),
             "status": getattr(e, "status", "Confirmed"),
             "image": e.image,
         }
@@ -72,7 +64,7 @@ def view_booking(booking_id):
         'Family': 150.0
     }
 
-    # Reuse your existing event page with the booking form
+    # Reuse existing event page with the booking form
     form = BookingForm()
     comment_form = CommentForm()
     return render_template('event.html', event=event, booking_form=form, comment_form=comment_form, ticket_prices=ticket_prices)
@@ -172,11 +164,16 @@ def event(event_id):
         unit_price = ticket_prices.get(ticket_type, 50.0)
         total_price = unit_price * form.ticketQty.data
         
-        # Create the booking (temporarily without ticket_type until DB is fixed)
+        # ticket type database storage
+        type_mapping = {"Standard": 1, "Premium": 2, "Family": 3}
+        type_id = type_mapping.get(form.ticketType.data, 1)
+        
+        # Create the booking with type field
         new_order = Order(
             user_id=current_user.id,
             quantity=form.ticketQty.data,
             price=total_price,
+            type=type_id,
             event_id=ev.id
         )
         
@@ -194,7 +191,7 @@ def event(event_id):
 
     return render_template(
         'event.html',
-        event=ev,                    # pass DB object as "event"
+        event=ev, # pass DB object as "event"
         comment_form=comment_form,
         comments=comments,
         booking_form=form,
