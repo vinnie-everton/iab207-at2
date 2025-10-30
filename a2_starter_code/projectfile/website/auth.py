@@ -49,7 +49,7 @@ def register():
         address = register_form.address.data
         contact = register_form.contact.data
 
-        existing_user = db.session.scalar(db.select(User).where(User.name==user_name))
+        existing_user = db.session.scalar(db.select(User).where(User.username==user_name))
         existing_email = db.session.scalar(db.select(User).where(User.emailid==email))
 
         if existing_user:
@@ -63,7 +63,7 @@ def register():
 
 
         hashed_pwd = generate_password_hash(password)
-        new_user = User(name=user_name, fullname =full_name, address=address, contact=contact, emailid=email, password_hash = hashed_pwd)
+        new_user = User(username=user_name, fullname=full_name, address=address, contact=contact, emailid=email, password_hash = hashed_pwd)
         db.session.add(new_user)
         db.session.commit()
 
