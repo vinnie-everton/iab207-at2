@@ -43,8 +43,12 @@ def register():
     error = None
     if register_form.validate_on_submit():
         user_name = register_form.user_name.data
+        full_name = register_form.full_name.data
         password = register_form.password.data
         email = register_form.email.data
+        address = register_form.address.data
+        contact = register_form.contact.data
+
         existing_user = db.session.scalar(db.select(User).where(User.name==user_name))
         existing_email = db.session.scalar(db.select(User).where(User.emailid==email))
 
@@ -59,7 +63,7 @@ def register():
 
 
         hashed_pwd = generate_password_hash(password)
-        new_user = User(name=user_name, emailid=email, password_hash = hashed_pwd)
+        new_user = User(name=user_name, fullname =full_name, address=address, contact=contact, emailid=email, password_hash = hashed_pwd)
         db.session.add(new_user)
         db.session.commit()
 
