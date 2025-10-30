@@ -68,7 +68,8 @@ def view_booking(booking_id):
 
     # Reuse your existing event page with the booking form
     form = BookingForm()
-    return render_template('event.html', event=event, booking_form=form)
+    comment_form = CommentForm()
+    return render_template('event.html', event=event, booking_form=form, comment_form=comment_form)
 
     
 @main_bp.route('/search')
