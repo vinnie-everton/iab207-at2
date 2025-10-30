@@ -66,10 +66,16 @@ def view_booking(booking_id):
     order = Order.query.filter_by(id=booking_id, user_id=current_user.id).first_or_404()
     event = Event.query.get_or_404(order.event_id) if order.event_id else None
 
+    ticket_prices = {
+        'Standard': 50.0,
+        'Premium': 100.0,
+        'Family': 150.0
+    }
+
     # Reuse your existing event page with the booking form
     form = BookingForm()
     comment_form = CommentForm()
-    return render_template('event.html', event=event, booking_form=form, comment_form=comment_form)
+    return render_template('event.html', event=event, booking_form=form, comment_form=comment_form, ticket_prices=ticket_prices)
 
     
 @main_bp.route('/search')
@@ -108,6 +114,11 @@ def event(event_id):
 
     # Load the event row; avoid variable name 'event' to not shadow the function
     ev = Event.query.get_or_404(event_id)
+    ticket_prices = {
+            'Standard': 50.0,
+            'Premium': 100.0,
+            'Family': 150.0
+        }
 
    # --- Handle comment submission ---
     if comment_form.submit.data and comment_form.validate_on_submit():
@@ -156,11 +167,7 @@ def event(event_id):
             return redirect(url_for('main.event', event_id=ev.id))
         
         # Calculate price based on ticket type
-        ticket_prices = {
-            'Standard': 50.0,
-            'Premium': 100.0,
-            'Family': 150.0
-        }
+      
         ticket_type = form.ticketType.data
         unit_price = ticket_prices.get(ticket_type, 50.0)
         total_price = unit_price * form.ticketQty.data
@@ -190,7 +197,8 @@ def event(event_id):
         event=ev,                    # pass DB object as "event"
         comment_form=comment_form,
         comments=comments,
-        booking_form=form
+        booking_form=form,
+        ticket_prices=ticket_prices
     )
 
 @main_bp.route('/create', methods=['GET', 'POST'])
