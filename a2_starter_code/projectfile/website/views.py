@@ -276,7 +276,15 @@ def edit_event(event_id):
         event.starttime = event_dt
         event.endtime   = datetime.combine(form.eDate.data, form.eEnd.data or time.max)
         event.numticket = form.eTickets.data
-        event.image = form.eImageFile.data
+        # image upload
+        if form.eImageFile.data and form.eImageFile.data.filename != '':
+            image_file = form.eImageFile.data
+            filename = secure_filename(image_file.filename)
+            # Filename timestamp to prevent overwriting
+            unique_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}"
+            filepath = os.path.join(current_app.root_path, 'static', 'img', unique_filename)
+            image_file.save(filepath)
+            event.image = unique_filename
         
         # Logic for EVENT STATUS
         if event.eventdate.date() < date.today():

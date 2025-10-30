@@ -17,7 +17,7 @@ def login():
     if login_form.validate_on_submit():
         user_name = login_form.user_name.data
         password = login_form.password.data
-        user = db.session.scalar(db.select(User).where(User.name==user_name))
+        user = db.session.scalar(db.select(User).where(User.username==user_name))
         
         if user is None:
             error = 'Incorrect user name'

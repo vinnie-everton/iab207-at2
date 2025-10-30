@@ -163,7 +163,7 @@
         {% for c in comments %}
           <li class="list-group-item">
             <div class="d-flex justify-content-between">
-              <strong>{{ c.user.name }}</strong>
+              <strong>{{ c.user.username }}</strong>
               <small class="text-muted">{{ c.created_at.strftime('%d %b %Y %H:%M') if c.created_at }}</small>
             </div>
             <div class="mt-1">{{ c.text | e }}</div>
