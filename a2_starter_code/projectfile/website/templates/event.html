@@ -76,9 +76,9 @@
               <div class="mb-3 p-3 bg-light rounded">
                 <h6 class="mb-2">Ticket Prices</h6>
                 <ul class="list-unstyled small mb-0">
-                  <li><strong>Standard:</strong> $50 / ticket</li>
-                  <li><strong>Premium:</strong> $100 / ticket</li>
-                  <li><strong>Family:</strong> $150 / ticket</li>
+                  <li><strong>Standard:</strong> ${{ "%.0f"|format(ticket_prices.Standard) }} / ticket</li>
+                  <li><strong>Premium:</strong> ${{ "%.0f"|format(ticket_prices.Premium) }} / ticket</li>
+                  <li><strong>Family:</strong> ${{ "%.0f"|format(ticket_prices.Family) }} / ticket</li>
                 </ul>
                 <div class="mt-2 text-muted small"><em>Total is calculated on booking</em></div>
               </div>
