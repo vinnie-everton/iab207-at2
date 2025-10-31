@@ -24,10 +24,10 @@
                     </div>
                 {% endif %}
             </div>
-
+            <!-- /event description-->
             <div class="col-12">
                 {{ form.eDesc.label(class="form-label") }}
-                {{ form.eDesc(class="form-control", rows="4", placeholder="Brief description") }}  Textarea for event description #}
+                {{ form.eDesc(class="form-control", rows="4", placeholder="Brief description") }}
                 {% if form.eDesc.errors %}
                     <div class="text-danger mt-1">
                         {% for error in form.eDesc.errors %}
@@ -48,7 +48,7 @@
                     </div>
                 {% endif %}
             </div>
-
+            <!-- /event Location-->
             <div class="col-md-6">
                 {{ form.eVenue.label(class="form-label") }}
                 {{ form.eVenue(class="form-control", placeholder="e.g., Aurora Park Stadium") }}
@@ -61,6 +61,7 @@
                 {% endif %}
             </div>
 
+            <!-- /Date and Time-->
             <div class="col-md-4">
                 {{ form.eDate.label(class="form-label") }}
                 {{ form.eDate(class="form-control") }}
@@ -87,7 +88,7 @@
 
             <div class="col-md-4">
                 {{ form.eEnd.label(class="form-label") }}
-                {{ form.eEnd(class="form-control") }}
+                {{ form.eEnd(class="form-control") }} 
                 {% if form.eEnd.errors %}
                     <div class="text-danger mt-1">
                         {% for error in form.eEnd.errors %}
@@ -97,6 +98,7 @@
                 {% endif %}
             </div>
 
+            <!-- /No of Tickets-->
             <div class="col-md-6">
                 {{ form.eTickets.label(class="form-label") }}
                 {{ form.eTickets(class="form-control", placeholder="e.g., 500") }}
@@ -107,11 +109,12 @@
                         {% endfor %}
                     </div>
                 {% endif %}
-            </div>  
+            </div>
 
+            <!-- /Image Upload-->
             <div class="col-12">
                 {{ form.eImageFile.label(class="form-label") }}
-                {{ form.eImageFile(class="form-control") }}
+                {{ form.eImageFile(class="form-control") }} 
                 {% if form.eImageFile.errors %}
                     <div class="text-danger mt-1">
                         {% for error in form.eImageFile.errors %}
@@ -122,8 +125,9 @@
                 <small class="form-text text-muted">Allowed formats: JPG, PNG, JPEG</small>
             </div>
 
+            <!-- /event submit-->
             <div class="col-12">
-                {{ form.submit(class="btn btn-primary") }}
+                {{ form.submit(class="btn btn-primary") }} ]
                 <a class="btn btn-outline-secondary" href="{{ url_for('main.index') }}">Cancel</a>
             </div>
         </form>
