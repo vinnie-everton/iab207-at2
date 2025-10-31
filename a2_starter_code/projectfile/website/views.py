@@ -139,19 +139,21 @@ def event(event_id):
             flash('Please log in to make a booking.', 'warning')
             return redirect(url_for('auth.login'))
         
-        # Check event status before allowing booking
-        if ev.status == 'Cancelled':
-            flash('This event has been cancelled and is no longer available for booking.', 'danger')
-            return redirect(url_for('main.event', event_id=ev.id))
-        elif ev.status == 'Sold Out':
-            flash('This event is sold out. No tickets are available.', 'warning')
-            return redirect(url_for('main.event', event_id=ev.id))
-        elif ev.status == 'Inactive':
-            flash('This event has already occurred and is no longer available for booking.', 'warning')
-            return redirect(url_for('main.event', event_id=ev.id))
-        elif ev.status != 'Open':
-            flash('This event is not currently available for booking.', 'warning')
-            return redirect(url_for('main.event', event_id=ev.id))
+        # Event status
+        status_messages = {
+            "Cancelled": ("This event has been cancelled.", "danger"),
+            "Sold Out": ("This event is sold out.", "warning"),
+            "Inactive": ("This event has already occurred.", "warning")
+        }
+
+        # Prevent booking based on event status
+        if ev.status in status_messages:
+            msg, level = status_messages[ev.status]
+            flash(msg, level)
+            return redirect(url_for("main.event", event_id=ev.id))
+        if ev.status != "Open":
+            flash("This event is not currently available for booking.", "warning")
+            return redirect(url_for("main.event", event_id=ev.id))
         
         # Check if enough tickets are available
         if ev.numticket < form.ticketQty.data:
@@ -224,7 +226,7 @@ def create():
 
 
 
-        # Logic for EVENT STATUS
+        # Event Status
         if form.eDate.data<date.today():
             status = 'Inactive'           
         elif form.eTickets.data == 0:
