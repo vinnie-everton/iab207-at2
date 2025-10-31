@@ -132,7 +132,7 @@ def event(event_id):
     # Pull comments for this event, newest first (ordered by relationship)
     comments = ev.comments.all()
 
-    # --- Handle booking submission ---
+    # Handle booking submission
     if form.submit.data and form.validate_on_submit():
         # Check if user is authenticated
         if not current_user.is_authenticated:
@@ -252,7 +252,6 @@ def create():
     return render_template('create.html', form=form, event_form=form)
 
 
-# originally /event/<int:event_id/edit>
 @main_bp.route('/event/<int:event_id>/edit', methods=['GET', 'POST'])
 @login_required
 def edit_event(event_id):
