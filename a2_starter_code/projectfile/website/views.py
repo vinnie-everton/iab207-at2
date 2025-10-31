@@ -33,17 +33,17 @@ def history():
     
     bookings = []
     for (o, e) in rows:
-        # Ticket type mapping
+        # for Ticket Type mapping
         type_mapping = {1: "Standard", 2: "Premium", 3: "Family"}
         ticket_type = type_mapping.get(o.type, "Standard")
         
         booking = {
-            "id": o.id,  # used by the View button
+            "id": o.id,
             "title": getattr(e, "eventname", "Event"),
             "venue": e.venue,
             "date": o.date or getattr(e, "eventdate", None),
-            "tickets": o.quantity,  # template expects 'tickets'
-            "ticket_type": ticket_type,  # mapped from type field
+            "tickets": o.quantity,
+            "ticket_type": ticket_type,
             "price": getattr(o, "price", 0.0),
             "status": getattr(e, "status", "Confirmed"),
             "image": e.image,
@@ -104,7 +104,7 @@ def event(event_id):
     form = BookingForm()
     comment_form = CommentForm()
 
-    # Load the event row; avoid variable name 'event' to not shadow the function
+    # Loads the event row
     ev = Event.query.get_or_404(event_id)
     ticket_prices = {
             'Standard': 50.0,
@@ -168,7 +168,7 @@ def event(event_id):
         type_mapping = {"Standard": 1, "Premium": 2, "Family": 3}
         type_id = type_mapping.get(form.ticketType.data, 1)
         
-        # Create the booking with type field
+        # Create booking
         new_order = Order(
             user_id=current_user.id,
             quantity=form.ticketQty.data,
@@ -191,7 +191,7 @@ def event(event_id):
 
     return render_template(
         'event.html',
-        event=ev, # pass DB object as "event"
+        event=ev, # passes DB object as "event"
         comment_form=comment_form,
         comments=comments,
         booking_form=form,
