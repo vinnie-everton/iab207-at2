@@ -57,7 +57,7 @@
           </form>
         </div>
       {% endif %}
-    </div> <!-- /col-12 col-lg-7 -->
+    </div> 
 
     <!-- RIGHT: Booking card -->
     <div class="col-12 col-lg-5">
@@ -72,7 +72,7 @@
               {{ booking_form.hidden_tag() }}
               <input type="hidden" name="event_id" value="{{ event.id }}">
 
-              <!-- Price Information -->
+              <!-- Price Info -->
               <div class="mb-3 p-3 bg-light rounded">
                 <h6 class="mb-2">Ticket Prices</h6>
                 <ul class="list-unstyled small mb-0">
@@ -120,9 +120,9 @@
           {% endif %}
         </div>
       </div>
-    </div> <!-- /col-12 col-lg-5 -->
+    </div>
 
-  </div> <!-- /row -->
+  </div> 
 
   <!-- ROW 2: Flash messages (full width) -->
   {% with messages = get_flashed_messages(with_categories=true) %}
