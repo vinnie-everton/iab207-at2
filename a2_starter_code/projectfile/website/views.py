@@ -30,9 +30,8 @@ def history():
     
     bookings = []
     for (order_record, event_record) in orders:
-        # for Ticket Type mapping
-        type_mapping = {1: "Standard", 2: "Premium", 3: "Family"}
-        ticket_type = type_mapping[order_record.type]
+        #  Ticket Type
+        type_name = ticket_types[order_record.type]
         
         booking = {
             "id": order_record.id,
