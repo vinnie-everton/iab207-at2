@@ -2,6 +2,8 @@ from . import db
 from datetime import datetime, timezone
 from flask_login import UserMixin
 
+# User model includes username, the user's full name, their email address, home address and contact number.
+# Also includes the relationship between comment and orders table.
 class User(db.Model, UserMixin):
     __tablename__ = 'users'
     id = db.Column(db.Integer,primary_key=True)
@@ -13,16 +15,17 @@ class User(db.Model, UserMixin):
     password_hash = db.Column(db.String(255), nullable=False)
     comments = db.relationship('Comment', backref='user')
     orders = db.relationship('Order', backref='user')
-
+# Event table that will be used when creating events. 
+# It features a relationship with comments, including the order in which they were made.
 class Event(db.Model):
     __tablename__ = 'event'
     id = db.Column(db.Integer, primary_key=True)
-    eventname = db.Column(db.String(80)) #
-    category = db.Column(db.String(80)) #picklist
+    eventname = db.Column(db.String(80)) 
+    category = db.Column(db.String(80)) 
     description = db.Column(db.String(250))
-    eventdate = db.Column (db.DateTime) #need to be adjusted
-    starttime = db.Column (db.DateTime) #need to be adjusted
-    endtime = db.Column (db.DateTime) #need to be adjusted
+    eventdate = db.Column (db.DateTime) 
+    starttime = db.Column (db.DateTime)
+    endtime = db.Column (db.DateTime) 
     venue = db.Column(db.String(80))
     image = db.Column(db.String(80))
     numticket = db.Column (db.Integer)    
@@ -36,16 +39,15 @@ class Event(db.Model):
     cascade='all, delete-orphan',
     order_by="desc(Comment.created_at)")
     
-
+# Comments table
 class Comment(db.Model):
     __tablename__ = 'comments'
     id = db.Column(db.Integer, primary_key=True)
     text = db.Column(db.String(400))
     created_at = db.Column(db.DateTime, default=lambda: datetime.now(timezone.utc))
-    # add the foreign key
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
-
+# Orders table, which include the type of ticket that the user has booked. 
 class Order(db.Model): 
     __tablename__ = 'order'
     id = db.Column(db.Integer, primary_key=True)
