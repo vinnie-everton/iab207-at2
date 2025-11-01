@@ -6,11 +6,11 @@
 
 
 {% block content %}
- <!-- Categories (static) -->
+ <!-- Categories filter buttons (dynamic) -->
   <section id="categories" class="py-3 border-bottom bg-light">
     <div class="container">
       <div class="d-flex flex-wrap align-items-center gap-2">
-        <span class="small text-uppercase fw-semibold">Categories:</span>
+        <span class="small text-uppercase fw-semibold">Categories:</span> <!-- all contain <a> which alters url, contains a button, and makes the button active if its is the selected category -->
         <a href="{{ url_for('main.filter', category='All') }}" class="btn btn-outline-primary btn-sm {% if selected_category == 'All' %}active{% endif %}">All</a>
         <a href="{{ url_for('main.filter', category='Football') }}" class="btn btn-outline-primary btn-sm {% if selected_category == 'Football' %}active{% endif %}">Football</a>
         <a href="{{ url_for('main.filter', category='Rugby') }}" class="btn btn-outline-primary btn-sm {% if selected_category == 'Rugby' %}active{% endif %}">Rugby</a>
@@ -56,9 +56,10 @@
     </div>
   </section>
 
+<!-- provides search bar error message if no result can be found -->
   {% if search_query %}
     <section class="container py-5 event-grid position-relative" style="z-index: 3;">
-      <div class="row g-4">
+      <div class="row g-4"> <!-- utilises search_query value in message -->
         <div class="container text-center small alert alert-warning">No events found matching {{search_query}} . Try searching something else</div>
       </div>
     </section>
@@ -68,6 +69,7 @@
 
 
   
+
 
 
 
