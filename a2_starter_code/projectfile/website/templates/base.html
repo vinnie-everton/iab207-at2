@@ -60,8 +60,10 @@
             <div class="col-lg-7">
               <h1 class="display-5 fw-bold">Find. Book. Cheer.</h1>
               <p class="lead mb-4">Browse upcoming stadium sports and book in seconds. Filter by category, track status, and dive into details.</p>
+              <!-- search container for search bar -->
                <div class="search-container">
-                  <form class="form-inline d-flex flex-nowrap" action="{{ url_for('main.search') }}" >
+                  <form class="form-inline d-flex flex-nowrap" action="{{ url_for('main.search') }}" > <!-- adds search to url -->
+                    <!-- button and search input -->
                     <input type="text" name="search" class="form-control flex-grow-1 my-1 mr-sm-2" id="SearchForm" placeholder="Search for Events here">
                     <button type="submit" class="flex-shrink-1 btn btn-primary my-1">Submit</button>
                   </form>
@@ -106,6 +108,7 @@
 
 
 </html>
+
 
 
 
