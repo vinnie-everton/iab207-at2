@@ -1,4 +1,3 @@
-# import flask - from 'package' import 'Class'
 from flask import Flask, render_template
 from flask_bootstrap import Bootstrap5
 from flask_sqlalchemy import SQLAlchemy
@@ -11,13 +10,14 @@ db = SQLAlchemy()
 # a web server will run this web application
 def create_app():
   
-    app = Flask(__name__)  # this is the name of the module/package that is calling this app
-    # Should be set to false in a production environment
+    app = Flask(__name__)  
     app.debug = True
     app.secret_key = 'somesecretkey'
     # set the app configuration data 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sitedata.sqlite'
+    # set the upload folder for images when creating events
     app.config['UPLOAD_FOLDER'] = 'website/static/img'
+    # set the max length for images uploaded
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  
     
     os.makedirs(os.path.join(app.root_path, 'static', 'img'), exist_ok=True)
@@ -40,11 +40,7 @@ def create_app():
     @login_manager.user_loader
     def load_user(user_id):
        return db.session.scalar(db.select(User).where(User.id==user_id))
-    # Temporary user loader (until DB and User model are ready)
-    #@login_manager.user_loader
-    #def load_user(user_id):
-         # Returning None tells Flask-Login "no logged-in user"
-         #return None
+  
 
     from . import views
     app.register_blueprint(views.main_bp)
@@ -52,7 +48,7 @@ def create_app():
     from . import auth
     app.register_blueprint(auth.auth_bp)
 
-         # ----- Error Handlers -----
+    # This error handler will be called when opening when getting a 404 error.
     @app.errorhandler(404)
     def page_not_found(e):
         return render_template('errors/404.html'), 404
