@@ -24,7 +24,7 @@
                     </div>
                 {% endif %}
             </div>
-            <!-- /event description-->
+            <!-- event description-->
             <div class="col-12">
                 {{ form.eDesc.label(class="form-label") }}
                 {{ form.eDesc(class="form-control", rows="4", placeholder="Brief description") }}
@@ -48,7 +48,7 @@
                     </div>
                 {% endif %}
             </div>
-            <!-- /event Location-->
+            <!-- event Location-->
             <div class="col-md-6">
                 {{ form.eVenue.label(class="form-label") }}
                 {{ form.eVenue(class="form-control", placeholder="e.g., Aurora Park Stadium") }}
@@ -61,7 +61,7 @@
                 {% endif %}
             </div>
 
-            <!-- /Date and Time-->
+            <!-- Date and Time-->
             <div class="col-md-4">
                 {{ form.eDate.label(class="form-label") }}
                 {{ form.eDate(class="form-control") }}
@@ -98,7 +98,7 @@
                 {% endif %}
             </div>
 
-            <!-- /No of Tickets-->
+            <!-- No of Tickets-->
             <div class="col-md-6">
                 {{ form.eTickets.label(class="form-label") }}
                 {{ form.eTickets(class="form-control", placeholder="e.g., 500") }}
@@ -111,7 +111,7 @@
                 {% endif %}
             </div>
 
-            <!-- /Image Upload-->
+            <!-- Image Upload-->
             <div class="col-12">
                 {{ form.eImageFile.label(class="form-label") }}
                 {{ form.eImageFile(class="form-control") }} 
@@ -125,7 +125,7 @@
                 <small class="form-text text-muted">Allowed formats: JPG, PNG, JPEG</small>
             </div>
 
-            <!-- /event submit-->
+            <!-- event submit-->
             <div class="col-12">
                 {{ form.submit(class="btn btn-primary") }} ]
                 <a class="btn btn-outline-secondary" href="{{ url_for('main.index') }}">Cancel</a>

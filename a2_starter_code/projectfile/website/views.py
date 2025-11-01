@@ -40,7 +40,7 @@ def history():
             "venue": event_record.venue,
             "date": order_record.date,
             "tickets": order_record.quantity,
-            "ticket_type": ticket_type,
+            "ticket_type": type_name,
             "price": order_record.price,
             "status": event_record.status,
             "image": event_record.image,
@@ -51,20 +51,14 @@ def history():
 @main_bp.route('/booking/<int:booking_id>')
 @login_required
 def view_booking(booking_id):
-    # Ensure the booking belongs to the current user
-    user_booking = Order.query.filter_by(id=booking_id, user_id=current_user.id).first_or_404()
-    booked_event = Event.query.get_or_404(user_booking.event_id) if user_booking.event_id else None
+    # Get the user's booking
+    booking = Order.query.filter_by(id=booking_id, user_id=current_user.id).first_or_404()
+    event = Event.query.get_or_404(booking.event_id)
 
-    ticket_prices = {
-        'Standard': 50.0,
-        'Premium': 100.0,
-        'Family': 150.0
-    }
-
-    # Reuse existing event page with the booking form
-    form = BookingForm()
+    # Show the event page
+    booking_form = BookingForm()
     comment_form = CommentForm()
-    return render_template('event.html', event=booked_event, booking_form=form, comment_form=comment_form, ticket_prices=ticket_prices)
+    return render_template('event.html', event=event, booking_form=booking_form, comment_form=comment_form, ticket_prices=ticket_prices)
 
     
 @main_bp.route('/search')
@@ -96,6 +90,14 @@ def filter(): #function regarding filters
 def user():
     return render_template("user.html")
 
+# Ticket types for booking
+ticket_prices = {
+    'Standard': 50.0,
+    'Premium': 100.0,
+    'Family': 150.0
+}
+ticket_types = {1: "Standard", 2: "Premium", 3: "Family"}
+
 @main_bp.route('/event/<int:event_id>', methods=['GET', 'POST'])
 def event(event_id):
     form = BookingForm()
@@ -103,11 +105,6 @@ def event(event_id):
 
     # Loads the event row
     ev = Event.query.get_or_404(event_id)
-    ticket_prices = {
-            'Standard': 50.0,
-            'Premium': 100.0,
-            'Family': 150.0
-        }
 
    # --- Handle comment submission ---
     if comment_form.submit.data and comment_form.validate_on_submit():
@@ -136,6 +133,8 @@ def event(event_id):
             flash('Please log in to make a booking.', 'warning')
             return redirect(url_for('auth.login'))
         
+
+        
         # check event status
         if ev.status == "Cancelled":
             flash("This event has been cancelled.", "danger")
@@ -156,13 +155,17 @@ def event(event_id):
             return redirect(url_for('main.event', event_id=ev.id))
         
         # Calculate price based on ticket type
-        ticket_type = form.ticketType.data
-        unit_price = ticket_prices[ticket_type]
+        selected_type = form.ticketType.data
+        unit_price = ticket_prices[selected_type]
         total_price = unit_price * form.ticketQty.data
         
-        # ticket type database storage
-        type_mapping = {"Standard": 1, "Premium": 2, "Family": 3}
-        type_id = type_mapping.get(form.ticketType.data, 1)
+        # Get ticket type ID 
+        if selected_type == "Standard":
+            type_id = 1
+        elif selected_type == "Premium":
+            type_id = 2
+        else:  # Family
+            type_id = 3
         
         # Create booking
         new_order = Order(
@@ -176,13 +179,13 @@ def event(event_id):
         # Update available ticket count
         ev.numticket -= form.ticketQty.data
         
-        # Update event status if sold out
+        # Check if sold out
         if ev.numticket == 0:
             ev.status = 'Sold Out'
         
         db.session.add(new_order)
         db.session.commit()
-        flash(f'Booking successful! Your order ID is {new_order.id}', 'success')
+        flash(f'Booking successful! Order ID: {new_order.id}', 'success')
         return redirect(url_for('main.history'))
 
     return render_template(
@@ -199,22 +202,25 @@ def event(event_id):
 def create():
     form = EventForm()
     if form.validate_on_submit():
+        # Ensures that endtime is after startime
+        if form.eEnd.data <= form.eStart.data:
+            flash('End time must be after start time.', 'warning')
+            return render_template('create.html', form=form, event_form=form)
 
         event_dt = datetime.combine(form.eDate.data, form.eStart.data)
         start_dt = event_dt
         end_dt = datetime.combine(form.eDate.data, form.eEnd.data)
-
 
         img_filename = 'default.jpg'  
         if form.eImageFile.data:
             image_file = form.eImageFile.data
             if image_file.filename != '':
                 filename = secure_filename(image_file.filename)
-                # Make filename unique by adding timestamp
-                unique_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}"
-                filepath = os.path.join(current_app.root_path, 'static', 'img', unique_filename)
+                # Add timestamp to avoid conflicts
+                new_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}"
+                filepath = os.path.join(current_app.root_path, 'static', 'img', new_filename)
                 image_file.save(filepath)
-                img_filename = unique_filename
+                img_filename = new_filename
 
         # Event Status
         if form.eDate.data<date.today():
@@ -258,6 +264,11 @@ def edit_event(event_id):
 
 
     if form.validate_on_submit():
+        # Again ensures that endtime is after starttime
+        if form.eEnd.data <= form.eStart.data:
+            flash('End time must be after start time.', 'warning')
+            return render_template('create.html', event_form=form, form=form, edit=True)
+            a
         event.eventname = form.eName.data
         event.description = form.eDesc.data
         event.category = form.eCategory.data
@@ -271,11 +282,11 @@ def edit_event(event_id):
         if form.eImageFile.data and form.eImageFile.data.filename != '':
             image_file = form.eImageFile.data
             filename = secure_filename(image_file.filename)
-            # Filename timestamp to prevent overwriting
-            unique_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}"
-            filepath = os.path.join(current_app.root_path, 'static', 'img', unique_filename)
+            # Add timestamp to avoid conflicts
+            new_filename = f"{datetime.now().strftime('%Y%m%d_%H%M%S')}_{filename}"
+            filepath = os.path.join(current_app.root_path, 'static', 'img', new_filename)
             image_file.save(filepath)
-            event.image = unique_filename
+            event.image = new_filename
         
         #EVENT STATUS
         if event.eventdate.date() < date.today():

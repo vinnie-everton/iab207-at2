@@ -1,6 +1,6 @@
 from flask_wtf import FlaskForm
 from wtforms.fields import TextAreaField, SubmitField, StringField, PasswordField, IntegerField, SelectField, DateField, TimeField, FileField
-from wtforms.validators import InputRequired, Length, Email, EqualTo
+from wtforms.validators import InputRequired, Length, Email, EqualTo, NumberRange
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.validators import Optional
 
@@ -24,7 +24,7 @@ class RegisterForm(FlaskForm):
 
  # Booking form
 class BookingForm(FlaskForm):
-    ticketQty = IntegerField("Number of Tickets", validators=[InputRequired()])
+    ticketQty = IntegerField("Number of Tickets", validators=[InputRequired(), NumberRange(min=1, message='Enter at least 1 ticket')])
     ticketType = SelectField("Ticket Type", choices=[("Standard", "Standard"), ("Premium", "Premium"), ("Family", "Family")], validators=[InputRequired()])
     submit = SubmitField("Book Now")
 
@@ -37,7 +37,7 @@ class EventForm(FlaskForm):
     eDate = DateField("Event Date", format='%Y-%m-%d', validators=[InputRequired()])
     eStart = TimeField("Start Time", format='%H:%M', validators=[InputRequired()])
     eEnd   = TimeField("End Time",   format='%H:%M', validators=[InputRequired()])
-    eTickets = IntegerField("Tickets Available", validators=[InputRequired()])
+    eTickets = IntegerField("Tickets Available", validators=[InputRequired(), NumberRange(min=0, message='Tickets must be 0 or greater')])
     eImageFile = FileField("Upload Image (optional)", validators=[FileAllowed(['jpg', 'png', 'jpeg'], 'Only JPG, PNG, and JPEG files are allowed!')])
     submit = SubmitField("Save Event")
 
