@@ -23,7 +23,7 @@ def index():
 @login_required
 def history():
     # Join Orders to Events for the current user
-    rows = (
+    user_booking_records = (
         db.session.query(Order, Event)
         .join(Event, Order.event_id == Event.id)
         .filter(Order.user_id == current_user.id)
@@ -32,21 +32,21 @@ def history():
     )
     
     bookings = []
-    for (o, e) in rows:
+    for (order_record, event_record) in user_booking_records:
         # for Ticket Type mapping
         type_mapping = {1: "Standard", 2: "Premium", 3: "Family"}
-        ticket_type = type_mapping.get(o.type, "Standard")
+        ticket_type = type_mapping.get(order_record.type, "Standard")
         
         booking = {
-            "id": o.id,
-            "title": getattr(e, "eventname", "Event"),
-            "venue": e.venue,
-            "date": o.date or getattr(e, "eventdate", None),
-            "tickets": o.quantity,
+            "id": order_record.id,
+            "title": getattr(event_record, "eventname", "Event"),
+            "venue": event_record.venue,
+            "date": order_record.date or getattr(event_record, "eventdate", None),
+            "tickets": order_record.quantity,
             "ticket_type": ticket_type,
-            "price": getattr(o, "price", 0.0),
-            "status": getattr(e, "status", "Confirmed"),
-            "image": e.image,
+            "price": getattr(order_record, "price", 0.0),
+            "status": getattr(event_record, "status", "Confirmed"),
+            "image": event_record.image,
         }
         bookings.append(booking)
     return render_template('history.html', bookings=bookings)
@@ -55,8 +55,8 @@ def history():
 @login_required
 def view_booking(booking_id):
     # Ensure the booking belongs to the current user
-    order = Order.query.filter_by(id=booking_id, user_id=current_user.id).first_or_404()
-    event = Event.query.get_or_404(order.event_id) if order.event_id else None
+    user_booking_order = Order.query.filter_by(id=booking_id, user_id=current_user.id).first_or_404()
+    booked_event = Event.query.get_or_404(user_booking_order.event_id) if user_booking_order.event_id else None
 
     ticket_prices = {
         'Standard': 50.0,
