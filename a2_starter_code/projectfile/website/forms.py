@@ -4,26 +4,22 @@ from wtforms.validators import InputRequired, Length, Email, EqualTo
 from flask_wtf.file import FileField, FileAllowed, FileRequired
 from wtforms.validators import Optional
 
-# creates the login information
+# Creates the login form
 class LoginForm(FlaskForm):
     user_name=StringField("User Name", validators=[InputRequired('Enter user name')])
     password=PasswordField("Password", validators=[InputRequired('Enter user password')])
     submit = SubmitField("Login")
 
- # this is the registration form
+ # Creates the user registration form
 class RegisterForm(FlaskForm):
     user_name = StringField("User Name", validators=[InputRequired()])
     full_name = StringField("Full Name", validators=[InputRequired()])
     email = StringField("Email Address", validators=[Email("Please enter a valid email")])
     address = StringField("Address", validators=[InputRequired()])
     contact = StringField("Phone Number", validators=[InputRequired()])
-    # linking two fields - password should be equal to data entered in confirm
     password=PasswordField("Password", validators=[InputRequired(),
                   EqualTo('confirm', message="Passwords should match")])
     confirm = PasswordField("Confirm Password")
-
-    # submit button
-
     submit = SubmitField("Register")
 
  # Booking form
@@ -56,12 +52,10 @@ def relax_for_edit(form):
     ]:
         field = getattr(form, fname, None)
         if field:
-            # Remove InputRequired validators
             field.validators = [
                 v for v in field.validators
                 if v.__class__.__name__ != "InputRequired"
             ]
-            # Add Optional to allow blanks
             field.validators.append(Optional())
 
 
