@@ -22,30 +22,27 @@ def index():
 @main_bp.route('/history')
 @login_required
 def history():
-    # Join Orders to Events for the current user
-    user_booking_records = (
-        db.session.query(Order, Event)
-        .join(Event, Order.event_id == Event.id)
-        .filter(Order.user_id == current_user.id)
-        .order_by(Order.date.desc())
-        .all()
-    )
+    # get user's bookings
+    orders = (db.session.query(Order, Event)
+              .join(Event, Order.event_id == Event.id)
+              .filter(Order.user_id == current_user.id)
+              .order_by(Order.date.desc()).all())
     
     bookings = []
-    for (order_record, event_record) in user_booking_records:
+    for (order_record, event_record) in orders:
         # for Ticket Type mapping
         type_mapping = {1: "Standard", 2: "Premium", 3: "Family"}
-        ticket_type = type_mapping.get(order_record.type, "Standard")
+        ticket_type = type_mapping[order_record.type]
         
         booking = {
             "id": order_record.id,
-            "title": getattr(event_record, "eventname", "Event"),
+            "title": event_record.eventname,
             "venue": event_record.venue,
-            "date": order_record.date or getattr(event_record, "eventdate", None),
+            "date": order_record.date,
             "tickets": order_record.quantity,
             "ticket_type": ticket_type,
-            "price": getattr(order_record, "price", 0.0),
-            "status": getattr(event_record, "status", "Confirmed"),
+            "price": order_record.price,
+            "status": event_record.status,
             "image": event_record.image,
         }
         bookings.append(booking)
@@ -55,8 +52,8 @@ def history():
 @login_required
 def view_booking(booking_id):
     # Ensure the booking belongs to the current user
-    user_booking_order = Order.query.filter_by(id=booking_id, user_id=current_user.id).first_or_404()
-    booked_event = Event.query.get_or_404(user_booking_order.event_id) if user_booking_order.event_id else None
+    user_booking = Order.query.filter_by(id=booking_id, user_id=current_user.id).first_or_404()
+    booked_event = Event.query.get_or_404(user_booking.event_id) if user_booking.event_id else None
 
     ticket_prices = {
         'Standard': 50.0,
@@ -67,7 +64,7 @@ def view_booking(booking_id):
     # Reuse existing event page with the booking form
     form = BookingForm()
     comment_form = CommentForm()
-    return render_template('event.html', event=event, booking_form=form, comment_form=comment_form, ticket_prices=ticket_prices)
+    return render_template('event.html', event=booked_event, booking_form=form, comment_form=comment_form, ticket_prices=ticket_prices)
 
     
 @main_bp.route('/search')
@@ -139,19 +136,17 @@ def event(event_id):
             flash('Please log in to make a booking.', 'warning')
             return redirect(url_for('auth.login'))
         
-        # Event status
-        status_messages = {
-            "Cancelled": ("This event has been cancelled.", "danger"),
-            "Sold Out": ("This event is sold out.", "warning"),
-            "Inactive": ("This event has already occurred.", "warning")
-        }
-
-        # Prevent booking based on event status
-        if ev.status in status_messages:
-            msg, level = status_messages[ev.status]
-            flash(msg, level)
+        # check event status
+        if ev.status == "Cancelled":
+            flash("This event has been cancelled.", "danger")
             return redirect(url_for("main.event", event_id=ev.id))
-        if ev.status != "Open":
+        elif ev.status == "Sold Out":
+            flash("This event is sold out.", "warning")
+            return redirect(url_for("main.event", event_id=ev.id))
+        elif ev.status == "Inactive":
+            flash("This event has already occurred.", "warning")
+            return redirect(url_for("main.event", event_id=ev.id))
+        elif ev.status != "Open":
             flash("This event is not currently available for booking.", "warning")
             return redirect(url_for("main.event", event_id=ev.id))
         
@@ -161,9 +156,8 @@ def event(event_id):
             return redirect(url_for('main.event', event_id=ev.id))
         
         # Calculate price based on ticket type
-      
         ticket_type = form.ticketType.data
-        unit_price = ticket_prices.get(ticket_type, 50.0)
+        unit_price = ticket_prices[ticket_type]
         total_price = unit_price * form.ticketQty.data
         
         # ticket type database storage
@@ -193,7 +187,7 @@ def event(event_id):
 
     return render_template(
         'event.html',
-        event=ev, # passes DB object as "event"
+        event=ev,
         comment_form=comment_form,
         comments=comments,
         booking_form=form,
@@ -206,9 +200,9 @@ def create():
     form = EventForm()
     if form.validate_on_submit():
 
-        event_dt = datetime.combine(form.eDate.data, form.eStart.data or time.min)
+        event_dt = datetime.combine(form.eDate.data, form.eStart.data)
         start_dt = event_dt
-        end_dt = datetime.combine(form.eDate.data, form.eEnd.data or time.max)
+        end_dt = datetime.combine(form.eDate.data, form.eEnd.data)
 
 
         img_filename = 'default.jpg'  
@@ -221,10 +215,6 @@ def create():
                 filepath = os.path.join(current_app.root_path, 'static', 'img', unique_filename)
                 image_file.save(filepath)
                 img_filename = unique_filename
-
-
-
-
 
         # Event Status
         if form.eDate.data<date.today():
@@ -260,7 +250,7 @@ def edit_event(event_id):
     event = Event.query.get_or_404(event_id)
     if event.owner_id != current_user.id:
         flash('You do not have permission to edit this event.', 'danger')
-        return redirect(url_for('main.event'))
+        return redirect(url_for('main.event', event_id=event.id))
     
     form = EventForm(obj=event)
 
@@ -272,10 +262,10 @@ def edit_event(event_id):
         event.description = form.eDesc.data
         event.category = form.eCategory.data
         event.venue = form.eVenue.data
-        event_dt = datetime.combine(form.eDate.data, form.eStart.data or time.min)
+        event_dt = datetime.combine(form.eDate.data, form.eStart.data)
         event.eventdate = event_dt
         event.starttime = event_dt
-        event.endtime   = datetime.combine(form.eDate.data, form.eEnd.data or time.max)
+        event.endtime = datetime.combine(form.eDate.data, form.eEnd.data)
         event.numticket = form.eTickets.data
         # image upload
         if form.eImageFile.data and form.eImageFile.data.filename != '':
@@ -287,7 +277,7 @@ def edit_event(event_id):
             image_file.save(filepath)
             event.image = unique_filename
         
-        # Logic for EVENT STATUS
+        #EVENT STATUS
         if event.eventdate.date() < date.today():
             event.status = 'Inactive'
         elif event.numticket == 0:
@@ -306,16 +296,9 @@ def cancel_event(event_id):
     event = Event.query.get_or_404(event_id)
     if event.owner_id != current_user.id:
         flash('You do not have permission to cancel this event.', 'danger')
-        return redirect(url_for('main.event'))
+        return redirect(url_for('main.event', event_id=event.id))
     
     event.status = 'Cancelled'
     db.session.commit()
     flash('Event cancelled successfully!', 'success')
     return redirect(url_for('main.index'))
-
-
-
-
-
-
-

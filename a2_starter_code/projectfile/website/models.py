@@ -49,9 +49,9 @@ class Comment(db.Model):
 class Order(db.Model): 
     __tablename__ = 'order'
     id = db.Column(db.Integer, primary_key=True)
-    price = db.Column(db.Integer) #needs to be adjusted
+    price = db.Column(db.Integer)
     quantity = db.Column(db.Integer)
     type = db.Column(db.Integer)
-    date = db.Column (db.DateTime, default=lambda: datetime.now(timezone.utc)) #need to be adjusted
+    date = db.Column (db.DateTime, default=lambda: datetime.now(timezone.utc))
     user_id = db.Column(db.Integer, db.ForeignKey('users.id'))
     event_id = db.Column(db.Integer, db.ForeignKey('event.id'))
