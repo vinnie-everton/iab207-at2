@@ -5,12 +5,12 @@ from .models import User
 from .forms import LoginForm, RegisterForm
 from . import db
 
-# Create a blueprint - make sure all BPs have unique names
 auth_bp = Blueprint('auth', __name__)
 
-# this is a hint for a login function
+# Login route
 @auth_bp.route('/login', methods=['GET', 'POST'])
-# view function
+# Login function
+# This function will allow users to login in the website.
 def login():
     login_form = LoginForm()
     error = None
@@ -18,14 +18,14 @@ def login():
         user_name = login_form.user_name.data
         password = login_form.password.data
         user = db.session.scalar(db.select(User).where(User.username==user_name))
-        
+        # Validation is included if users writes the wrong username or password
         if user is None:
             error = 'Incorrect user name'
-        elif not check_password_hash(user.password_hash, password): # takes the hash and cleartext password
+        elif not check_password_hash(user.password_hash, password):
             error = 'Incorrect password'
         if error is None:
             login_user(user)
-            nextp = request.args.get('next') # this gives the url from where the login page was accessed
+            nextp = request.args.get('next') 
             print(nextp)
             if nextp is None or not nextp.startswith('/'):
                 return redirect(url_for('main.index'))
@@ -35,9 +35,11 @@ def login():
     return render_template('user.html', form=login_form, heading='Login')
 
 
-# Register Route 
-@auth_bp.route('/register', methods=['GET', 'POST'])
+# Register route 
 
+@auth_bp.route('/register', methods=['GET', 'POST'])
+# Register function
+# This is the function which will allow users to register new accounts in the website. 
 def register():
     register_form = RegisterForm()
     error = None
@@ -48,7 +50,8 @@ def register():
         email = register_form.email.data
         address = register_form.address.data
         contact = register_form.contact.data
-
+        # It will also check if the user name or email already exists in the database 
+        # and if it does, the user will not be allowed to register with that user name or email.
         existing_user = db.session.scalar(db.select(User).where(User.username==user_name))
         existing_email = db.session.scalar(db.select(User).where(User.emailid==email))
 
@@ -60,8 +63,7 @@ def register():
             return render_template('user.html', form=register_form, heading='Register')
 
 
-
-
+       # Before the new user details are added to the db, the user's password will be hashed.
         hashed_pwd = generate_password_hash(password)
         new_user = User(username=user_name, fullname=full_name, address=address, contact=contact, emailid=email, password_hash = hashed_pwd)
         db.session.add(new_user)
@@ -80,6 +82,7 @@ def register():
 # Logout route
 
 @auth_bp.route('/logout')
+# Logout function will simply log out the user from the website and redirect them to the index page.
 def logout():
     logout_user()
     return redirect(url_for('main.index'))
