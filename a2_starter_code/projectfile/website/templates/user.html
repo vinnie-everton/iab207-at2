@@ -12,8 +12,9 @@
     <h1 class="h4 text-center mb-4">{{heading}}</h1>
       {{render_form(form)}}
 
+<!-- User provided with login page if heading is Login.
+ Will also be provided with a link for registration page. -->
 
-<!-- When you have Login form, then show the user a link to register -->
 {% if heading == 'Login' %}
 <p class="text-center mt-3 mb-0">
     New user? <a href="{{url_for('auth.register')}}">Click here</a> to register.
