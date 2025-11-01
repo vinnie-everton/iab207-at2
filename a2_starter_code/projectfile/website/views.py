@@ -59,30 +59,34 @@ def view_booking(booking_id):
     comment_form = CommentForm()
     return render_template('event.html', event=event, booking_form=booking_form, comment_form=comment_form, ticket_prices=ticket_prices)
 
-    
+#main function for the search bar
 @main_bp.route('/search')
 def search():
-    search_query = request.args.get('search', '').strip()
+    search_query = request.args.get('search', '').strip() # attaches a request for search and strips of any excess space characters
 
-    if not search_query:
+    if not search_query: #if there is no value in search query redirects to the main index
         return redirect(url_for('main.index'))
 
-    query = f"%{search_query}%"
+    query = f"%{search_query}%" #query enables string interpolation and formats search query into string
     events = list(db.session.scalars(db.select(Event).where(Event.eventname.like(query))))
-
-    if not events:
-        # No events found — show a message instead
+    #in list format SQL queries Event where the eventname is like the query result
+    #note this means the search bar can only search for titles of events
+    
+    if not events: #if no result in events return text of search bar in form of search query
         return render_template('index.html', search_query=search_query)
-    else:
+    else: #else return successful event queries related to search
         return render_template('index.html', events=events)
 
+#main function for filter searching
 @main_bp.route('/filter')
-def filter(): #function regarding filters
-    selected_category = request.args.get('category') 
-    event_query = db.select(Event) # initial sql event query
+def filter(): 
+    selected_category = request.args.get('category') #attaches a request for category 
+    event_query = db.select(Event) # initial sql event query to be added on queries
     if selected_category != 'All': #if selected category button is not All query for the specific button 
         event_query = event_query.where(func.lower(Event.category) == selected_category.lower())
-    events = list(db.session.scalars(event_query))
+        #SQL query Select Event where category = selected category
+        # query is defaulted to lowercase to keep everything consistent
+    events = list(db.session.scalars(event_query)) #create a list of events which output from the query
     return render_template('index.html', events=events, selected_category=selected_category)
 
 @main_bp.route('/user')
@@ -311,4 +315,5 @@ def cancel_event(event_id):
     event.status = 'Cancelled'
     db.session.commit()
     flash('Event cancelled successfully!', 'success')
+
     return redirect(url_for('main.index'))
