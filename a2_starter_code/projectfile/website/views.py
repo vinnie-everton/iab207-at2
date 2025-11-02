@@ -255,8 +255,10 @@ def create():
 
 @main_bp.route('/event/<int:event_id>/edit', methods=['GET', 'POST'])
 @login_required
+# Edit event function
 def edit_event(event_id):
     event = Event.query.get_or_404(event_id)
+    # This will ensure that only the event creator can make edits to the event
     if event.owner_id != current_user.id:
         flash('You do not have permission to edit this event.', 'danger')
         return redirect(url_for('main.event', event_id=event.id))
@@ -306,12 +308,14 @@ def edit_event(event_id):
 
 @main_bp.route('/event/<int:event_id>/cancel', methods=['POST'])
 @login_required
+# Cancel event function
 def cancel_event(event_id):
+    # Same as in the event function, this will ensure that only the event creator will be able to cancel the event
     event = Event.query.get_or_404(event_id)
     if event.owner_id != current_user.id:
         flash('You do not have permission to cancel this event.', 'danger')
         return redirect(url_for('main.event', event_id=event.id))
-    
+    # Event status change following cancellation
     event.status = 'Cancelled'
     db.session.commit()
     flash('Event cancelled successfully!', 'success')
