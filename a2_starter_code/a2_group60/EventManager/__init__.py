@@ -14,7 +14,7 @@ def create_app():
     # set the app configuration data 
     app.config['SQLALCHEMY_DATABASE_URI'] = 'sqlite:///sitedata.sqlite'
     # set the upload folder for images when creating events
-    app.config['UPLOAD_FOLDER'] = 'website/static/img'
+    app.config['UPLOAD_FOLDER'] = 'EventManager/static/img'
     # set the max length for images uploaded
     app.config['MAX_CONTENT_LENGTH'] = 16 * 1024 * 1024  
     
