@@ -1,4 +1,4 @@
-from website import db, create_app
+from EventManager import db, create_app
 app = create_app()
 ctx = app.app_context()
 ctx.push()
