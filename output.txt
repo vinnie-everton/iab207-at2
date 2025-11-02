@@ -1,0 +1,126 @@
+vinnie-everton <paulo.araujo@connect.qut.edu.au> (42):
+      Add files via upload
+      Update base.html
+      Update index.html
+      Update views.py
+      Uploaded create.html
+      Update history.html
+      Update event.html
+      Update auth.py
+      Update to user.html
+      Moved static folder to website.
+      Added link login page.
+      Update __init__.py
+      Merge branch 'main' of https://github.com/vinnie-everton/iab207-at2
+      Update to models.py
+      Update to auth.py
+      Create create_db.py
+      Create sitedata.sqlite
+      Update __init__.py
+      Update base.html
+      base.html update
+      Update user.html
+      Update __init__.py
+      Update forms.py
+      Update models.py
+      Update views.py
+      Update views.py
+      Merge branch 'main' of https://github.com/vinnie-everton/iab207-at2
+      Update views.py
+      Update models.py
+      Update models.py
+      Update forms.py
+      Update auth.py
+      Update auth.py
+      Updated database with created events
+      Update sitedata.sqlite
+      Update __init__.py
+      Update auth.py
+      Update forms.py
+      Update models.py
+      Update base.html
+      Update user.html
+      Comments
+
+amber-nyss <anyssen@dncs.com.au> (27):
+      Update README.md
+      Update README.md
+      Add files via upload
+      Create style.css
+      Create event1.txt
+      Add files via upload
+      Delete a2_starter_code/projectfile/website/templates/static/img/event1.txt
+      update ticket type and total cost
+      add search bar
+      add categories back into home page
+      Put all the columns for the db
+      removed excess @main def event
+      small change to search bar
+      added search route and small adjustments to dup history and event url
+      Update views.py
+      Update views.py
+      changed hero with search bar
+      updated sql on search
+      adjusted hero image alignment
+      Update search query with error response
+      updated search query for no search response
+      Added filtering functionality
+      updated filter buttons
+      small adjustment to error message for search
+      Added comments on view.py
+      added comments
+      added comments to base.html
+
+Alfin Joseph <josephalfin9@gmail.com> (21):
+      Create create.html
+      jinja
+      Updated create.html url_for index
+      update create
+      booking history page fix?
+      booking history page fix?
+      Updated to include Order_ID in booking history and static price in event booking page
+      Merge branch 'main' of https://github.com/vinnie-everton/iab207-at2
+      added booking validation and pricing
+      Update event.html
+      Updated error validitation for create event and uses ticket type from database for
+      fixed file storage error and fixed username display
+      added comments etc
+      added comments
+      update comments
+      update comments
+      updated views.py for booking
+      update booking in views
+      cleaned up some formatting for views.py
+      updated to include minimum tickets, cleared some redundant code
+      updated ticket type
+
+cole-arm <n11859563@qut.edu.au> (17):
+      Add files via upload
+      Create history.html
+      Update history.html
+      Comment out unfinished DB/USER
+      View for History
+      Comment out history view booking function
+      Create .gitignore
+      ERROR PAGES
+      Merge branch 'main' of https://github.com/vinnie-everton/iab207-at2
+      update history.html
+      UPDATES 21/10/25
+      Comments working
+      Merge branch 'main' of https://github.com/vinnie-everton/iab207-at2
+      Block Content Reshuffle
+      Merge branch 'main' of https://github.com/vinnie-everton/iab207-at2
+      relacforedit and url delete
+      Merge branch 'main' of https://github.com/vinnie-everton/iab207-at2
+
+josephalfin9 <josephalfin9@gmail.com> (9):
+      Initial commit
+      MAde everything into jinja format
+      Enhance event.html with flash messages, jinja for booking form
+      Add booking and event forms to forms.py
+      updated views with booking event and and create event routes with ensuring user is logged in and also generates order form
+      Added imports for create
+      updated models for order and event
+      fixed errors
+      updated
+
